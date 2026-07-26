@@ -26,3 +26,6 @@ require'initial_setup'
 
 -- Your colorscheme and modifications to colours and highlighting groups:
 require'colours'
+
+-- Neovim's built-in terminal.
+require'terminal'
