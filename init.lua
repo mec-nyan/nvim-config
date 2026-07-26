@@ -29,3 +29,6 @@ require'colours'
 
 -- Neovim's built-in terminal.
 require'terminal'
+
+-- Completion
+require'completion'

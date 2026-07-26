@@ -24,7 +24,6 @@ vim.o.signcolumn = 'number' -- or 'yes' as you like.
 vim.o.updatetime = 250
 vim.o.timeout = true
 vim.o.timeoutlen = 300
-vim.o.completeopt = 'menuone,preview,noselect'
 vim.o.shortmess = vim.o.shortmess .. 'c'
 vim.o.termguicolors = true
 -- TODO: Replace with Unicode symbols.
