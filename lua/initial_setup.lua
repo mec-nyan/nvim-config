@@ -60,7 +60,6 @@ setkey('n', '<M-q>', '<cmd>quit<cr>', { desc = 'quit (normal)' })
 setkey('i', '<M-q>', '<esc><cmd>quit<cr>', { desc = 'quit (normal)' })
 setkey('n', '<M-o>', '<cmd>only<cr>', { desc = 'only' })
 setkey('n', 'ge', 'G', { desc = 'end of file' })
-setkey('n', '<leader>f', '<cmd>Explore<cr>', { desc = 'files' })
 
 
 return {}

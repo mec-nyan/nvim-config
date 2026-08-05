@@ -32,3 +32,6 @@ require 'terminal'
 
 -- Completion
 require 'completion'
+
+-- Explorer
+require 'explore'
