@@ -22,13 +22,13 @@
 
 -- Small set of options/configuration that must run before any other options
 -- should go here:
-require'initial_setup'
+require 'initial_setup'
 
 -- Your colorscheme and modifications to colours and highlighting groups:
-require'colours'
+require 'colours'
 
 -- Neovim's built-in terminal.
-require'terminal'
+require 'terminal'
 
 -- Completion
-require'completion'
+require 'completion'
