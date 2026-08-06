@@ -52,5 +52,82 @@ local function config_rust_analyzer()
 	vim.lsp.enable 'rust-analyzer'
 end
 
+------------------------------
+-- Config lsp kind symbols. --
+------------------------------
 
-return M
+local function config_lspkind()
+	local my_kind = {
+		Text = 'abc',
+		Method = 'x.f()',
+		Function = 'f(x)',
+		Constructor = 'C()',
+		Field = 'x.a',
+		Variable = 'var',
+		Class = 'Cls',
+		Interface = 'I{}',
+		Module = 'mod',
+		Property = 'prop',
+		Unit = 'unit',
+		Value = 'val',
+		Enum = 'enum',
+		Keyword = 'kwrd',
+		Snippet = 'snip',
+		Color = 'rgb',
+		File = 'file',
+		Reference = 'x&',
+		Folder = 'dir',
+		EnumMember = 'enum',
+		Constant = 'cons',
+		Struct = '{}',
+		Event = 'ev',
+		Operator = 'op',
+		TypeParameter = '<T>',
+	}
+
+	local cik = vim.lsp.protocol.CompletionItemKind
+
+	for k, v in pairs(my_kind) do
+		cik[cik[k]] = v
+	end
+end
+
+
+local function config_lang_servers()
+	config_rust_analyzer()
+	config_clangd()
+	config_gopls()
+	config_pylsp()
+end
+
+local function set_autocmds()
+	vim.api.nvim_create_autocmd('LspAttach', {
+		callback = function(ev)
+			local bufnr = vim.api.nvim_get_current_buf()
+
+			vim.lsp.completion.enable(true, ev.data.client_id, bufnr, {
+				autotrigger = true,
+				convert = function(item)
+					return { abbr = item.label:gsub('%b()', '') }
+				end,
+			})
+
+			vim.api.nvim_create_autocmd('BufWritePre', {
+				callback = function()
+					vim.lsp.buf.format()
+				end
+			})
+
+			vim.lsp.inlay_hint.enable(true)
+		end,
+	})
+end
+
+
+return {
+	setup = function()
+		config_lspkind()
+		config_lang_servers()
+		set_autocmds()
+	end,
+}
