@@ -37,7 +37,7 @@ local function open_terminal(direction)
 	end
 
 	vim.wo.winhighlight = 'Normal:Pmenu'
-	vim.opt_local.speel = false
+	vim.opt_local.spell = false
 	vim.cmd.startinsert()
 
 end

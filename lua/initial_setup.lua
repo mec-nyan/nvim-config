@@ -27,7 +27,7 @@ vim.o.timeoutlen = 300
 vim.o.shortmess = vim.o.shortmess .. 'c'
 vim.o.termguicolors = true
 -- TODO: Replace with Unicode symbols.
-vim.o.listchars = 'tab:> ,trail:_,nbsp:+,extends:>,precedes:<'
+vim.o.listchars = 'tab:▏ ,trail:␣,nbsp:+,extends:>,precedes:<,eol:⏎'
 vim.o.list = true
 vim.o.encoding = 'utf-8'
 vim.o.splitright = true
@@ -45,7 +45,7 @@ vim.o.foldenable = true
 vim.o.foldlevel = 3
 vim.o.foldcolumn = '1'
 -- TODO: Replace with Unicode symbols.
-vim.o.fillchars = 'fold: ,foldopen:+,foldclose:-,foldsep:|'
+vim.o.fillchars = 'fold: ,foldopen:+,foldclose:-,foldsep:▏'
 vim.o.laststatus = 3
 vim.o.spelllang = 'en_gb'
 vim.o.spell = true
