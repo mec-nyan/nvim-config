@@ -24,6 +24,9 @@
 -- should go here:
 require 'initial_setup'
 
+-- General key mappings.
+require 'keymappings'
+
 -- Your colorscheme and modifications to colours and highlighting groups:
 require 'colours'
 

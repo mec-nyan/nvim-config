@@ -6,10 +6,20 @@
 --
 --]]
 
+--- Open a new window with an existing instance of the terminal emulator.
+--- Launch a new instance if none is found.
+--- @param direction Where to open the new window (default: below).
+local function open_terminal(direction)
+	direction = direction or 'below'
 
-local function open_terminal()
-	vim.cmd.new()
-	vim.api.nvim_win_set_height(0, 15)
+	if direction == 'below' then
+		vim.cmd.new()
+		vim.api.nvim_win_set_height(0, 15)
+	else
+		vim.cmd.vnew()
+	end
+
+
 
 	local term_buf = nil
 
@@ -26,21 +36,46 @@ local function open_terminal()
 		vim.cmd.terminal()
 	end
 
-	vim.o.winhighlight = 'Normal:Pmenu'
+	vim.wo.winhighlight = 'Normal:Pmenu'
+	vim.opt_local.speel = false
 	vim.cmd.startinsert()
 
 end
 
 
+-- Immediately enter insert mode in terminals.
+vim.api.nvim_create_autocmd('WinEnter', {
+	callback = function()
+		if vim.bo.buftype == 'terminal' then
+			vim.cmd.startinsert()
+		end
+	end
+})
+
+local function open_terminal_vert_right()
+	open_terminal('right')
+end
+
+
+-------------------
+-- Key mappings. --
+-------------------
+
 local setkey = vim.keymap.set
 
-setkey('n', '<leader>t', open_terminal, { desc = 'Open terminal' })
-setkey('t', '<esc>', '<C-\\><C-n>', { desc = 'Alias: leave terminal-mode' })
-setkey('t', '<M-q>', '<C-\\><C-n><cmd>close<cr>', { desc = 'Terminal: close' })
+setkey('n', '<leader>tt', open_terminal, { desc = '[term] Open below', noremap = true })
+setkey('n', '<leader>tr', open_terminal_vert_right, { desc = '[term] Open right', noremap = true })
 
+setkey('t', '<esc>', '<C-\\><C-n>', { desc = '[term][alias] leave terminal-mode' })
+setkey('t', '<M-q>', '<C-\\><C-n><cmd>close<cr>', { desc = '[term] Close' })
+
+
+-----------------
+-- Navigation. --
+-----------------
 
 for k, v in pairs({h = 'left', j = 'down', k = 'up', l = 'right'}) do
-	setkey('t', '<M-' .. k .. '>', '<C-\\><C-n><C-w>' .. k, { desc = '[t] Window ' .. v })
+	setkey('t', '<M-' .. k .. '>', '<C-\\><C-n><C-w>' .. k, { desc = '[term] Window ' .. v })
 end
 
 return {}

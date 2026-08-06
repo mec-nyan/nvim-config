@@ -21,7 +21,7 @@ setkey('n', '<M-o>', '<cmd>only<cr>', { desc = 'only' })
 setkey('n', 'ge', 'G', { desc = 'end of file' })
 
 -- Search
-setkey('n', '<leader>l', { desc = 'clear searh highlight' })
+setkey('n', '<leader>l', '<cmd>nohlsearch<cr>', { desc = 'clear searh highlight' })
 
 
 return {}
