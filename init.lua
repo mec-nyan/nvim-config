@@ -30,6 +30,9 @@ require 'keymappings'
 -- Au
 require 'autocommands'
 
+-- Navigation
+require 'windows'
+
 -- Your colorscheme and modifications to colours and highlighting groups:
 require 'colours'
 
