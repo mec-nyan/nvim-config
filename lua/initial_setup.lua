@@ -51,15 +51,4 @@ vim.o.spelllang = 'en_gb'
 vim.o.spell = true
 
 
--- Universal key mappings.
-local setkey = vim.keymap.set
-
-setkey('n', '<M-w>', '<cmd>write<cr>', { desc = 'write (normal)' })
-setkey('i', '<M-w>', '<esc><cmd>write<cr>', { desc = 'write (insert)' })
-setkey('n', '<M-q>', '<cmd>quit<cr>', { desc = 'quit (normal)' })
-setkey('i', '<M-q>', '<esc><cmd>quit<cr>', { desc = 'quit (normal)' })
-setkey('n', '<M-o>', '<cmd>only<cr>', { desc = 'only' })
-setkey('n', 'ge', 'G', { desc = 'end of file' })
-
-
 return {}
