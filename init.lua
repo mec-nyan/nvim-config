@@ -27,6 +27,9 @@ require 'initial_setup'
 -- General key mappings.
 require 'keymappings'
 
+-- Au
+require 'autocommands'
+
 -- Your colorscheme and modifications to colours and highlighting groups:
 require 'colours'
 
