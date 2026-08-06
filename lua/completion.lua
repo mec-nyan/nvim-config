@@ -11,6 +11,7 @@
 --
 --]]
 
+require 'lsp'
 
 vim.o.completeopt = 'menuone,preview,noselect'
 
