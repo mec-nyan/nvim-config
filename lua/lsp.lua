@@ -132,6 +132,9 @@ local function set_keymappings()
 	setkey('i', '<Enter>', function()
 		return vim.fn.pumvisible() == 1 and '<C-y>' or '<Enter>'
 	end, { expr = true, silent = true })
+
+	-- Trigger omnifunc with ctrl+space.
+	setkey('i', '<C-Space>', '<C-x><C-o>', { desc = '[i][alias] trigger completion' })
 end
 
 
