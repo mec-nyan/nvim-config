@@ -14,7 +14,7 @@ local default_sl = "%<%f %h%w%m%r %{% v:lua.require('vim._core.util').term_exitc
 
 -- Let's try to build it in blocks.
 
-local mode = "%{% luaeval('_A[vim.api.nvim_get_mode().mode]', {'n': '%1*nor', 'i': '%2*ins'}) %}"
+local mode = "%{% luaeval('_A[vim.api.nvim_get_mode().mode]', {'n': '%1* nor ', 'i': '%2* ins ', 'v': '%3* vis ', 't': '%4* ter ', 'c': '%5* com ', 'R': '%6* rep '}) %}"
 local file = '%<%f'
 local flags = {
 	help = '%h',
@@ -35,10 +35,14 @@ local showcmd = '%S'
 
 local function make_status_line()
 	-- TODO: Get the colours from the theme.
-	vim.cmd.highlight { "User1", "guifg=slateblue" }
-	vim.cmd.highlight { "User2", "guifg=hotpink" }
+	vim.cmd.highlight { "User1", "guibg=slateblue", "guifg=white", "gui=italic" }
+	vim.cmd.highlight { "User2", "guibg=hotpink", "guifg=white", "gui=italic" }
+	vim.cmd.highlight { "User3", "guibg=purple", "guifg=white", "gui=italic" }
+	vim.cmd.highlight { "User4", "guibg=yellowgreen", "guifg=black", "gui=italic" }
+	vim.cmd.highlight { "User5", "guibg=green", "guifg=white", "gui=italic" }
+	vim.cmd.highlight { "User6", "guibg=indianred", "guifg=white", "gui=italic" }
 
-	local sl = mode .. ' %*'
+	local sl = mode .. '%*'
 
 	sl = sl .. ' ' .. file
 	sl = sl .. ' ' .. flags.help .. flags.preview .. flags.modified .. flags.readonly
