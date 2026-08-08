@@ -124,6 +124,17 @@ local function set_autocmds()
 end
 
 
+local function set_keymappings()
+	local setkey = vim.keymap.set
+
+	-- Confirm with <enter>
+	-- This needs to be improved for other uses of <enter> and <tab>.
+	setkey('i', '<Enter>', function()
+		return vim.fn.pumvisible() == 1 and '<C-y>' or '<Enter>'
+	end, { expr = true, silent = true })
+end
+
+
 return {
 	setup = function()
 		config_lspkind()
