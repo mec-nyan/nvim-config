@@ -44,3 +44,6 @@ require 'completion'
 
 -- Explorer
 require 'explore'
+
+-- Diagnostics
+require 'diagnostics'
