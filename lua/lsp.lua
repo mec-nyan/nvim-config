@@ -93,6 +93,55 @@ local function config_lspkind()
 end
 
 
+local function set_lsp_keymappings()
+	local setkey = vim.keymap.set
+
+	-- LSP `go to` mappings.
+	local buf = vim.lsp.buf
+	local goto_mappings = {
+		{
+			mode = 'n',
+			mapping = '<leader>a',
+			action = buf.code_action,
+			description = '[lsp] code action',
+		},
+		{
+			mode = 'n',
+			mapping = '<leader>gd',
+			action = buf.definition,
+			description = '[lsp] definition',
+		},
+		{
+			mode = 'n',
+			mapping = '<leader>gn',
+			action = buf.rename,
+			description = '[lsp] renmae',
+		},
+		{
+			mode = 'n',
+			mapping = '<leader>gi',
+			action = buf.implementation,
+			description = '[lsp] implementation',
+		},
+		{
+			mode = 'n',
+			mapping = '<leader>gr',
+			action = buf.references,
+			description = '[lsp] references',
+		},
+		{
+			mode = 'n',
+			mapping = '<leader>gs',
+			action = buf.document_symbol,
+			description = '[lsp] symbols',
+		},
+	}
+
+	for _, mapping in ipairs(goto_mappings) do
+		setkey(mapping.mode, mapping.mapping, mapping.action, { desc = mapping.description })
+	end
+end
+
 local function config_lang_servers()
 	config_rust_analyzer()
 	config_clangd()
@@ -119,6 +168,9 @@ local function set_autocmds()
 			})
 
 			vim.lsp.inlay_hint.enable(true)
+
+			-- Set LSP keymappings only when a server is attached.
+			set_lsp_keymappings()
 		end,
 	})
 end
@@ -140,6 +192,7 @@ end
 
 return {
 	setup = function()
+		set_keymappings()
 		config_lspkind()
 		config_lang_servers()
 		set_autocmds()
