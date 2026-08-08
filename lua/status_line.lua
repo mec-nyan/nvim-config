@@ -14,7 +14,7 @@ local default_sl = "%<%f %h%w%m%r %{% v:lua.require('vim._core.util').term_exitc
 
 -- Let's try to build it in blocks.
 
-local mode = ''
+local mode = "%{% luaeval('_A[vim.api.nvim_get_mode().mode]', {'n': '%1*nor', 'i': '%2*ins'}) %}"
 local file = '%<%f'
 local flags = {
 	help = '%h',
@@ -34,8 +34,13 @@ local showcmd = '%S'
 -- Example:
 
 local function make_status_line()
-	local sl = file
+	-- TODO: Get the colours from the theme.
+	vim.cmd.highlight { "User1", "guifg=slateblue" }
+	vim.cmd.highlight { "User2", "guifg=hotpink" }
 
+	local sl = mode .. ' %*'
+
+	sl = sl .. ' ' .. file
 	sl = sl .. ' ' .. flags.help .. flags.preview .. flags.modified .. flags.readonly
 	sl = sl .. ' ' .. filetype .. ' buf: ' .. bufnr .. ' l: ' .. linenr .. ' c: ' .. col
 
