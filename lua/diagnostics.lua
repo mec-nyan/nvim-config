@@ -36,7 +36,7 @@ local error, warning, info, hint = severity.ERROR, severity.WARN, severity.INFO,
 vim.diagnostic.config {
 	text = {
 		[error] = '🐛',
-		[warning] = ' ',
+		[warning] = '⚠️',
 		[info] = '📜',
 		[hint] = '💡',
 	},
