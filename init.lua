@@ -47,3 +47,6 @@ require 'explore'
 
 -- Diagnostics
 require 'diagnostics'
+
+-- Status line
+require 'status_line'
