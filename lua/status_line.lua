@@ -22,7 +22,11 @@ local flags = {
 	modified = '%m',
 	readonly = '%r',
 }
-local filetype = '%y'          -- i.e. [vim].
+
+--local filetype = '%y'          -- i.e. [vim].
+-- Nice icons/emojis for filetypes!
+filetype = "%{% {'lua': '🌙', 'python': '🐍', 'c': '<C>', 'cpp': '<C++>', 'rust': '🦀'}[&filetype] %}"
+
 local quickfix = '%q'          -- Quickfix List and Location List.
 local bufnr = '%n'             -- Buffer number.
 local linenr = '%l'            -- Line number.
