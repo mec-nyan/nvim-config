@@ -25,7 +25,8 @@ local flags = {
 
 --local filetype = '%y'          -- i.e. [vim].
 -- Nice icons/emojis for filetypes!
-filetype = "%{% {'lua': '🌙', 'python': '🐍', 'c': '<C>', 'cpp': '<C++>', 'rust': '🦀'}[&filetype] %}"
+-- TODO: What happens with "" (empty)? How to we manage filetypes not in our list?
+filetype = [[%{% { '': '🩵💚', 'lua': '🌙', 'python': '🐍', 'c': '<C>', 'cpp': '<C++>', 'rust': '🦀', 'help': '🪓', 'go': '🐹', 'zig': '🦎', 'sh': '🐚', 'bash': '🐚' }[&filetype] %}]]
 
 local quickfix = '%q'          -- Quickfix List and Location List.
 local bufnr = '%n'             -- Buffer number.
