@@ -45,6 +45,38 @@ local function set_cmdline_autocompletion()
 end
 
 
+-----------------------
+-- Fuzzy file picker --
+-----------------------
+
+-- Helper function: map
+local function map(tbl, fun)
+	if tbl == nil or #tbl == 0 then return end
+
+	local new_tbl = {}
+
+	for k, v in pairs(tbl) do
+		new_tbl[k] = fun(v)
+	end
+
+	return new_tbl
+end
+
+-- Helper function: filter
+local function filter(tbl, fun)
+	if tbl == nil or #tbl == 0 then return end
+
+	local new_tbl = {}
+
+	for k, v in pairs(tbl) do
+		if fun(v) then
+			new_tbl[k] = v
+		end
+	end
+
+	return new_tbl
+end
+
 set_cmdline_autocompletion()
 
 return {}
