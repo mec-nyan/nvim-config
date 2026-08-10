@@ -77,6 +77,42 @@ local function filter(tbl, fun)
 	return new_tbl
 end
 
+
+-- Use a script variable to hold results.
+local files_cache = {}
+
+local function _find(arg, _)
+	if #files_cache == 0 then
+		-- TODO: Can we rewrite this directly in Lua?
+		files_cache = vim.fn.map(
+			vim.fn.filter(
+				vim.fn.globpath('.', '**', 1, 1),
+				'!isdirectory(v:val)'
+			), "fnamemodify(v:val, ':.')"
+		)
+
+		-- How to use my helpers
+		-- files_cache = map(files_cache, function(item) return "- " .. item end)
+	end
+
+	if arg == '' then return files_cache end
+
+	return vim.fn.matchfuzzy(files_cache, arg)
+end
+
+-- Set our `findfunc`
+vim.o.findfunc = "v:lua.require'extras'.find"
+
+-- Clear the cache
+vim.api.nvim_create_autocmd('CmdlineEnter', {
+	pattern = ':',
+	callback = function()
+		files_cache = {}
+	end
+})
+
 set_cmdline_autocompletion()
 
-return {}
+return {
+	find = _find
+}
