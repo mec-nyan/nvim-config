@@ -23,6 +23,25 @@ local function set_cmdline_autocompletion()
 
 	vim.o.wildmode = 'noselect:lastused,full'
 	vim.o.wildoptions = 'pum'
+
+	-- We can apply different options for a specific command line:
+	--
+	-- i.e. set a different height for 'search':
+	vim.api.nvim_create_autocmd('CmdlineEnter', {
+		pattern = { '/', '?' },
+		command = 'set pumheight=8'
+	})
+
+	vim.api.nvim_create_autocmd('CmdlineEnter', {
+		pattern = { ':' },
+		command = 'set pumheight=0'
+	})
+
+	vim.api.nvim_create_autocmd('CmdlineLeave', {
+		pattern = { '/', '?' },
+		command = 'set pumheight&'
+	})
+
 end
 
 
