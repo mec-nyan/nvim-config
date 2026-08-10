@@ -50,3 +50,6 @@ require 'diagnostics'
 
 -- Status line
 require 'status_line'
+
+-- Extras
+require 'extras'

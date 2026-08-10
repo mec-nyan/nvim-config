@@ -48,8 +48,8 @@ local function make_status_line()
 
 	local sl = mode .. '%*'
 
-	sl = sl .. ' ' .. file .. '%='
-	sl = sl .. ' ' .. flags.help .. flags.preview .. flags.modified .. flags.readonly
+	sl = sl .. ' ' .. file
+	sl = sl .. ' ' .. flags.help .. flags.preview .. flags.modified .. flags.readonly .. '%='
 	sl = sl .. ' ' .. filetype .. ' buf: ' .. bufnr
 	sl = sl .. ' ' .. " %{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %}"
 
