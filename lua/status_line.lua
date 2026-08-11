@@ -13,8 +13,26 @@ local default_sl = "%<%f %h%w%m%r %{% v:lua.require('vim._core.util').term_exitc
 
 
 -- Let's try to build it in blocks.
+local nvim_modes = { 
+	n = '%1* nor ',
+	v = '%3* vis ',
+	V = '%3* vis ',
+	i = '%2* ins ',
+	t = '%4* ter ',
+	c = '%5* com ',
+	R = '%6* rep ',
+	r = '%6* >_  ',
+	rm = '%6* more ',
+}
 
-local mode = "%{% luaeval('_A[vim.api.nvim_get_mode().mode]', {'n': '%1* nor ', 'i': '%2* ins ', 'v': '%3* vis ', 't': '%4* ter ', 'c': '%5* com ', 'R': '%6* rep '}) %}"
+local mode = "%{% luaeval('_A[vim.api.nvim_get_mode().mode]', { "
+
+for k, v in pairs(nvim_modes) do
+	mode = mode .. string.format("'%s': '%s', ", k, v)
+end
+
+mode = mode .." } ) %}"
+
 local file = '%<%f'
 local flags = {
 	help = '%h',
