@@ -100,19 +100,28 @@ local function _find(arg, _)
 	return vim.fn.matchfuzzy(files_cache, arg)
 end
 
--- Set our `findfunc`
-vim.o.findfunc = "v:lua.require'extras'.find"
+local function set_up_fuzzy_picker()
 
--- Clear the cache
-vim.api.nvim_create_autocmd('CmdlineEnter', {
-	pattern = ':',
-	callback = function()
-		files_cache = {}
-	end
-})
+	-- Set our `findfunc`
+	vim.o.findfunc = "v:lua.require'extras'.find"
+
+	-- Clear the cache
+	vim.api.nvim_create_autocmd('CmdlineEnter', {
+		pattern = ':',
+		callback = function()
+			files_cache = {}
+		end
+	})
+
+	-- Add mappings
+	vim.keymap.set('n', '<leader>f', ':find ', { silent = true, desc = '[files] fuzzy file picker' })
+end
 
 set_cmdline_autocompletion()
 
+set_up_fuzzy_picker()
+
 return {
+	-- We need to return our find function so we can assign it later.
 	find = _find
 }
