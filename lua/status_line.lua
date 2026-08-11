@@ -18,7 +18,7 @@ local default_sl = "%<%f %h%w%m%r %{% v:lua.require('vim._core.util').term_exitc
 -- Mode indicator --
 --------------------
 
-local nvim_modes = { 
+local nvim_modes = {
 	n = '%1* nor ',
 	v = '%3* vis ',
 	V = '%3* vis ',
@@ -40,7 +40,7 @@ mode = mode .." } ) %}"
 
 
 ----------
--- File -- 
+-- File --
 ----------
 
 local file = '%<%9*%f%*'
@@ -67,7 +67,9 @@ local file_type_icons = {
 	sh = '🐚',
 	bash = '🐚',
 	markdown = 'MD',
-	gitcommit = '%7*git%*'
+	gitcommit = '%7* %*',
+	debsources = '📦',
+	dockerfile = '🐋'
 }
 
 filetype = " %{% { "
