@@ -117,9 +117,32 @@ local function set_up_fuzzy_picker()
 	vim.keymap.set('n', '<leader>f', ':find ', { silent = true, desc = '[files] fuzzy file picker' })
 end
 
+
+---------------
+-- Live grep --
+---------------
+
+--[[ WIP ]]--
+local function set_up_live_grep()
+	vim.api.nvim_create_user_command('Grep',
+		function(opts)
+			print(string.upper(opts.fargs[1]))
+		end,
+		{
+			nargs = '+',
+			bang = true,
+			complete = function(ArgLead, CmdLine, CursorPos)
+				return { 'nvim', 'is', 'fun' }
+			end,
+		}
+	)
+end
+
 set_cmdline_autocompletion()
 
 set_up_fuzzy_picker()
+
+-- set_up_live_grep()
 
 return {
 	-- We need to return our find function so we can assign it later.
