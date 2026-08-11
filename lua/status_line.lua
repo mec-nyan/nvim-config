@@ -26,7 +26,7 @@ local flags = {
 --local filetype = '%y'          -- i.e. [vim].
 -- Nice icons/emojis for filetypes!
 -- TODO: What happens with "" (empty)? How to we manage filetypes not in our list?
-filetype = [[%{% { '': '🩵💚', 'lua': '🌙', 'python': '🐍', 'c': '<C>', 'cpp': '<C++>', 'rust': '🦀', 'help': '🪓', 'go': '🐹', 'zig': '🦎', 'sh': '🐚', 'bash': '🐚', 'markdown': 'MD' }[&filetype] %}]]
+filetype = [[%{% { '': '🩵💚', 'lua': '🌙', 'python': '🐍', 'c': '<C>', 'cpp': '<C++>', 'rust': '🦀', 'help': '🪓', 'go': '🐹', 'zig': '🦎', 'sh': '🐚', 'bash': '🐚', 'markdown': 'MD', 'gitcommit': '%7* git %*' }[&filetype] %}]]
 
 local quickfix = '%q'          -- Quickfix List and Location List.
 local bufnr = '%n'             -- Buffer number.
@@ -46,6 +46,7 @@ local function make_status_line()
 	vim.cmd.highlight { "User4", "guibg=yellowgreen", "guifg=black", "gui=italic" }
 	vim.cmd.highlight { "User5", "guibg=green", "guifg=white", "gui=italic" }
 	vim.cmd.highlight { "User6", "guibg=indianred", "guifg=white", "gui=italic" }
+	vim.cmd.highlight { "User7", "guibg=none", "guifg=darkorange", "gui=bold" }
 
 	local sl = mode .. '%*'
 
