@@ -23,10 +23,35 @@ local flags = {
 	readonly = '%r',
 }
 
---local filetype = '%y'          -- i.e. [vim].
--- Nice icons/emojis for filetypes!
--- TODO: What happens with "" (empty)? How to we manage filetypes not in our list?
-filetype = [[%{% { '': '🩵💚', 'lua': '🌙', 'python': '🐍', 'c': '<C>', 'cpp': '<C++>', 'rust': '🦀', 'help': '🪓', 'go': '🐹', 'zig': '🦎', 'sh': '🐚', 'bash': '🐚', 'markdown': 'MD', 'gitcommit': '%7* git %*' }[&filetype] %}]]
+--------------------------------------
+-- Nice icons/emojis for filetypes! --
+--------------------------------------
+
+-- TODO: I'll only add the ones I encounter frequently.  I should add an 'or' function to use the
+-- default '&filetype' if not listed.
+local file_type_icons = {
+	[''] = '🩵💚',                 -- empty buffer i.e. start screen.
+	lua = '🌙',
+	python = '🐍',
+	c = '%8*⟨ C ⟩%*',
+	cpp = '%8*⟨C++⟩%*',
+	rust = '🦀',
+	help = '🪓',
+	go = '🐹',
+	zig = '🦎',
+	sh = '🐚',
+	bash = '🐚',
+	markdown = 'MD',
+	gitcommit = '%7*git%*'
+}
+
+filetype = " %{% { "
+
+for k, v in pairs(file_type_icons) do
+	filetype = filetype .. string.format("'%s': '%s', ", k, v)
+end
+
+filetype = filetype .. "}[&filetype] %} "
 
 local quickfix = '%q'          -- Quickfix List and Location List.
 local bufnr = '%n'             -- Buffer number.
@@ -47,6 +72,7 @@ local function make_status_line()
 	vim.cmd.highlight { "User5", "guibg=green", "guifg=white", "gui=italic" }
 	vim.cmd.highlight { "User6", "guibg=indianred", "guifg=white", "gui=italic" }
 	vim.cmd.highlight { "User7", "guibg=none", "guifg=darkorange", "gui=bold" }
+	vim.cmd.highlight { "User8", "guibg=none", "guifg=dodgerblue", "gui=bold" }
 
 	local sl = mode .. '%*'
 
