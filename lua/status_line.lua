@@ -13,6 +13,11 @@ local default_sl = "%<%f %h%w%m%r %{% v:lua.require('vim._core.util').term_exitc
 
 
 -- Let's try to build it in blocks.
+
+--------------------
+-- Mode indicator --
+--------------------
+
 local nvim_modes = { 
 	n = '%1* nor ',
 	v = '%3* vis ',
@@ -33,13 +38,15 @@ end
 
 mode = mode .." } ) %}"
 
-local file = '%<%f'
-local flags = {
-	help = '%h',
-	preview = '%w',
-	modified = '%m',
-	readonly = '%r',
-}
+
+----------
+-- File -- 
+----------
+
+local file = '%<%9*%f%*'
+
+local flags = '%h%w%m%r'
+
 
 --------------------------------------
 -- Nice icons/emojis for filetypes! --
@@ -79,6 +86,13 @@ local col = '%v'               -- Screen column.
 local perc = '%p'              -- Percentage.
 local showcmd = '%S'
 
+
+-----------
+-- Ruler --
+-----------
+
+local ruler =  " %{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %}"
+
 -- Example:
 
 local function make_status_line()
@@ -91,15 +105,9 @@ local function make_status_line()
 	vim.cmd.highlight { "User6", "guibg=indianred", "guifg=white", "gui=italic" }
 	vim.cmd.highlight { "User7", "guibg=none", "guifg=darkorange", "gui=bold" }
 	vim.cmd.highlight { "User8", "guibg=none", "guifg=dodgerblue", "gui=bold" }
+	vim.cmd.highlight { "User9", "guibg=none", "guifg=grey40" }
 
-	local sl = mode .. '%*'
-
-	sl = sl .. ' ' .. file
-	sl = sl .. ' ' .. flags.help .. flags.preview .. flags.modified .. flags.readonly .. '%='
-	sl = sl .. ' ' .. filetype .. ' buf: ' .. bufnr
-	sl = sl .. ' ' .. " %{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %}"
-
-	return sl
+	return string.format("%s%%* %s %s %%= %s buf: %s - %s", mode, file, flags, filetype, bufnr, ruler)
 end
 
 vim.o.statusline = make_status_line()
