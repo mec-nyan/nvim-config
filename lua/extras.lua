@@ -123,20 +123,35 @@ end
 ---------------
 
 --[[ WIP ]]--
+local selected = 0
+
+local function visit_file()
+end
+
+local function grep(arglead, cmdline, cursorpos)
+
+	local pattern = arglead or ""
+	if pattern == "" then
+		return {}
+	end
+
+	local cmd = { "rg", "--vimgrep", "--no-heading", "--color", "never", pattern }
+
+	return vim.fn.systemlist(cmd)
+end
+
 local function set_up_live_grep()
-	vim.api.nvim_create_user_command('Grep',
-		function(opts)
-			print(string.upper(opts.fargs[1]))
-		end,
+	vim.api.nvim_create_user_command('Grep', visit_file,
 		{
 			nargs = '+',
 			bang = true,
-			complete = function(ArgLead, CmdLine, CursorPos)
-				return { 'nvim', 'is', 'fun' }
-			end,
+			complete = grep
 		}
 	)
 end
+
+
+-- set_up_live_grep()
 
 set_cmdline_autocompletion()
 
