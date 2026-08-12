@@ -145,10 +145,24 @@ local function set_up_live_grep()
 	vim.api.nvim_create_autocmd('CmdlineLeavePre', {
 		callback = function()
 			local complete_info = vim.fn.cmdcomplete_info()
+
 			if complete_info['matches'] ~= nil then
-				print("Found it!")
-			else
-				print("Nothing to see here...")
+
+				local cmdline = vim.fn.getcmdline()
+
+				if cmdline:match("^%s*fin%%[d]%s") and complete_info['selected'] == -1 then
+					vim.fn.setcmdline(string.format("find %s", complete_info['matches'][1]))
+				end
+
+				if cmdline:match("^%sGrep%s") then
+					if complete_info['selected'] ~= -1 then
+						selected = complete_info['matches']['selected']
+					else
+						selected = complete_info['matches'][1]
+					end
+
+					vim.fn.setcmdline(complete_info['cmdline_orig'])
+				end
 			end
 		end,
 	})
