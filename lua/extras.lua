@@ -124,9 +124,24 @@ end
 
 --[[ WIP ]]--
 
-local selected = 0
+local selected = 1
 
 local function visit_file()
+	-- I'm trying to replicate this (see :h live-grep):
+	-- "let item = getqflist(#{lines: [s:selected]}).items[0]
+	-- "let pos  = '[0,\ item.lnum,\ item.col,\ 0]'
+	-- "exe $':b +call\ setpos(".",\ {pos}) {item.bufnr}'
+	-- "call setbufvar(item.bufnr, '&buflisted', 1)
+	--
+	-- TODO: Is this OK?
+	-- Hey! We're not filling the qflist anywhere!!!
+	local qflist = vim.fn.getqflist()
+	if not qflist[selected] then return end
+	local item = qflist[selected]
+	vim.fn.setpos('.', { 0, item.lnum, item.col, 0 })
+	vim.cmd.b(item.bufnr)
+	vim.fn.setbufvar(item.bufnr, '&buflisted', 1)
+
 end
 
 local function grep(arglead, cmdline, cursorpos)
