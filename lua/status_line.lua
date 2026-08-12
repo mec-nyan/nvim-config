@@ -69,7 +69,8 @@ local file_type_icons = {
 	markdown = 'MD',
 	gitcommit = '%7* %*',
 	debsources = '📦',
-	dockerfile = '🐋'
+	dockerfile = '🐋',
+	vim = '%5* Vim %*'
 }
 
 filetype = " %{% { "
