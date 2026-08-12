@@ -123,6 +123,7 @@ end
 ---------------
 
 --[[ WIP ]]--
+
 local selected = 0
 
 local function visit_file()
@@ -141,6 +142,17 @@ local function grep(arglead, cmdline, cursorpos)
 end
 
 local function set_up_live_grep()
+	vim.api.nvim_create_autocmd('CmdlineLeavePre', {
+		callback = function()
+			local complete_info = vim.fn.cmdcomplete_info()
+			if complete_info['matches'] ~= nil then
+				print("Found it!")
+			else
+				print("Nothing to see here...")
+			end
+		end,
+	})
+
 	vim.api.nvim_create_user_command('Grep', visit_file,
 		{
 			nargs = '+',
@@ -151,7 +163,7 @@ local function set_up_live_grep()
 end
 
 
--- set_up_live_grep()
+set_up_live_grep()
 
 set_cmdline_autocompletion()
 
