@@ -146,45 +146,54 @@ local function visit_file()
 	vim.api.nvim_win_set_cursor(0, { item.lnum, item.col })
 end
 
-local function grep(arglead, cmdline, cursorpos)
-
+local function grep(arglead, _, _)
 	local pattern = arglead or ""
 	if pattern == "" then
 		return {}
 	end
 
+	-- NOTE: I've hardcoded `grepprg` because I'm using `rg`.  A better approach is to use the
+	-- `grepprg` (default or user's) and also provide a user setting to set her preferred command.
 	local cmd = { "rg", "--vimgrep", "--no-heading", "--color", "never", pattern }
 
 	return vim.fn.systemlist(cmd)
 end
 
 local function set_up_live_grep()
+	local live_grep_command = 'Lgrep'
+
 	vim.api.nvim_create_autocmd('CmdlineLeavePre', {
 		callback = function()
-			local complete_info = vim.fn.cmdcomplete_info()
+			local cmdline = vim.fn.getcmdline()
 
-			if complete_info['matches'] ~= nil then
+			-- Apply these setting just for our command.
+			if cmdline:match("^" .. live_grep_command .. "%s") ~= nil then
+				local info = vim.fn.cmdcomplete_info()
 
-				local cmdline = vim.fn.getcmdline()
-
-				if cmdline:match("^%s*fin%%[d]%s") and complete_info['selected'] == -1 then
-					vim.fn.setcmdline(string.format("find %s", complete_info['matches'][1]))
-				end
-
-				if cmdline:match("^%sGrep%s") then
-					if complete_info['selected'] ~= -1 then
-						selected = complete_info['matches']['selected']
+				if info.matches ~= nil then
+					if info.selected ~= -1 then
+						M.selected = info.matches[info.selected + 1]
 					else
-						selected = complete_info['matches'][1]
+						-- Set the first item as the default selection.
+						-- I'm not quite convinced about this...
+						M.selected = info.matches[1]
 					end
 
-					vim.fn.setcmdline(complete_info['cmdline_orig'])
+					-- Populate the qflist:
+					vim.fn.setqflist({}, 'r', { title = "[" .. live_grep_command .. "]", lines = info.matches })
+					-- TODO: When/where should we clear the qflist?
+				else
+					-- No matches.
+					vim.notify("No matches.", vim.log.levels.INFO, {})
 				end
+
+				-- restore the cmdline (history?)
+				vim.fn.setcmdline(info.cmdline_orig)
 			end
 		end,
 	})
 
-	vim.api.nvim_create_user_command('Grep', visit_file,
+	vim.api.nvim_create_user_command(live_grep_command, visit_file,
 		{
 			nargs = '+',
 			bang = true,
