@@ -124,7 +124,9 @@ end
 
 --[[ WIP ]]--
 
-local selected = 1
+-- We need a script/module level variable.
+local M = {}
+M.selected = ""
 
 local function visit_file()
 	-- I'm trying to replicate this (see :h live-grep):
@@ -135,13 +137,13 @@ local function visit_file()
 	--
 	-- TODO: Is this OK?
 	-- Hey! We're not filling the qflist anywhere!!!
-	local qflist = vim.fn.getqflist()
-	if not qflist[selected] then return end
-	local item = qflist[selected]
-	vim.fn.setpos('.', { 0, item.lnum, item.col, 0 })
-	vim.cmd.b(item.bufnr)
-	vim.fn.setbufvar(item.bufnr, '&buflisted', 1)
+	
+	-- The Neovim way.
+	if M.selected == "" then return end
 
+	local item = vim.fn.getqflist({ lines = { M.selected } }).items[1]
+	vim.api.nvim_win_set_buf(0, item.bufnr)
+	vim.api.nvim_win_set_cursor(0, { item.lnum, item.col })
 end
 
 local function grep(arglead, cmdline, cursorpos)
@@ -198,9 +200,8 @@ set_cmdline_autocompletion()
 
 set_up_fuzzy_picker()
 
--- set_up_live_grep()
 
-return {
-	-- We need to return our find function so we can assign it later.
-	find = _find
-}
+-- We need to return our find function so we can assign it later.
+M.find = _find
+
+return M
