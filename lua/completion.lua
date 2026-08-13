@@ -14,10 +14,18 @@
 require 'lsp'.setup()
 
 vim.o.completeopt = 'fuzzy,menuone,preview,noselect'
+-- Does this belong here (or maybe in `colours`).
 vim.o.pumborder = 'rounded'
 vim.o.winborder = 'rounded'
-vim.cmd[[highlight link FloatBorder Function]]
-vim.cmd[[highlight link PmenuBorder String]]
+-- TODO: I'm kinda hardcoding these according the theme I'm using (catppuccin),
+-- I probably should do this `dynamically` if possible (d'you know I mean?).
+-- TODO: Customise the `FloatBorder` for diagnostics too.
+-- TODO: Use a darker colour for the preview window (autocmd).
+vim.cmd[[
+	highlight Pmenu guifg=#9399b2 guibg=#181825
+	highlight PmenuBorder guifg=#89b4fa guibg=#181825
+	highlight FloatBorder guifg=#89b4fa guibg=#181825
+]]
 
 local setkey = vim.keymap.set
 
