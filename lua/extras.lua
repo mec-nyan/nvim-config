@@ -12,6 +12,10 @@
 --]]
 
 
+---------------------------------
+-- Command line autocompletion --
+---------------------------------
+
 -- See `:h cmdline-autocompletion` for details.
 local function set_cmdline_autocompletion()
 	vim.api.nvim_create_autocmd('CmdlineChanged', {
@@ -78,6 +82,10 @@ local function filter(tbl, fun)
 end
 
 
+-- NOTE: For some reason a script variable didn't (seem to) work for the `live grep` implementation
+-- and I ended up add a module variable (see below `M.selected`).  Test that again and see if we can
+-- either use locals or module's variables in general for consistency.
+--
 -- Use a script variable to hold results.
 local files_cache = {}
 
@@ -129,15 +137,6 @@ local M = {}
 M.selected = ""
 
 local function visit_file()
-	-- I'm trying to replicate this (see :h live-grep):
-	-- "let item = getqflist(#{lines: [s:selected]}).items[0]
-	-- "let pos  = '[0,\ item.lnum,\ item.col,\ 0]'
-	-- "exe $':b +call\ setpos(".",\ {pos}) {item.bufnr}'
-	-- "call setbufvar(item.bufnr, '&buflisted', 1)
-	--
-	-- TODO: Is this OK?
-	-- Hey! We're not filling the qflist anywhere!!!
-	
 	-- The Neovim way.
 	if M.selected == "" then return end
 
