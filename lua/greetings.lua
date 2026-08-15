@@ -21,9 +21,10 @@
 vim.o.shortmess = vim.o.shortmess .. 'I'
 
 local intro_message = {
-	"n e o v i m",
-	"",
-	"Type:                               ",
+	"            N e o v i m             ",
+	"                                    ",
+	"               Type:                ",
+	"                                    ",
 	":help nvim<Enter>   if you are new! ",
 	":checkhealth<Enter> to optimise Nvim",
 	":q<Enter>           to exit         ",
@@ -44,9 +45,25 @@ local function show()
 	local height = vim.api.nvim_win_get_height(win)
 	local width = vim.api.nvim_win_get_width(win)
 
-	local info_message = string.format("%dx%d", width, height)
+	-- Set buffer options.
+	local options = {
+		bufhidden = 'wipe',
+		buflisted = false,
+		list = false,
+		swapfile = false,
+		readonly = false,
+		filetype = '',
+	}
+
+	for opt, val in pairs(options) do
+		vim.opt_local[opt] = val
+	end
+
 
 	vim.api.nvim_buf_set_lines(buf, 0, -1, false, { info_message })
+
+	vim.opt_local.readonly = true
+	vim.opt_local.modified = false
 end
 
 
