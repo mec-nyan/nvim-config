@@ -35,6 +35,12 @@ local function show()
 	local win = vim.api.nvim_get_current_win()
 	local buf = vim.api.nvim_get_current_buf()
 
+	-- TODO; Improve this guard:
+	if vim.fn.argc() > 0 or vim.api.nvim_buf_get_name(buf) ~= '' then
+		vim.notify("greetings: skipped.", vim.log.levels.INFO, {})
+		return
+	end
+
 	local height = vim.api.nvim_win_get_height(win)
 	local width = vim.api.nvim_win_get_width(win)
 
@@ -44,6 +50,6 @@ local function show()
 end
 
 
--- show()
+show()
 
 return {}
