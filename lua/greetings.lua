@@ -21,14 +21,13 @@
 vim.o.shortmess = vim.o.shortmess .. 'I'
 
 local intro_message = {
-	"            N e o v i m             ",
-	"                                    ",
-	"               Type:                ",
-	"                                    ",
-	":help nvim<Enter>   if you are new! ",
-	":checkhealth<Enter> to optimise Nvim",
-	":q<Enter>           to exit         ",
-	":help<Enter>        for help        ",
+	"                 == N e o v i m ==             ",
+	"                                               ",
+	"                                               ",
+	"If you're new to Nvim, type :help nvim<Enter>  ",
+	"To optimise Nvim, type      :checkhealth<Enter>",
+	"To quit, type               :q<Enter>          ",
+	"For help, type              :help<Enter>       ",
 }
 
 
@@ -46,6 +45,7 @@ local function show()
 	local width = vim.api.nvim_win_get_width(win)
 
 	-- Set buffer options.
+	-- TODO: Some user options will need to be restored!
 	local options = {
 		bufhidden = 'wipe',
 		buflisted = false,
@@ -53,14 +53,25 @@ local function show()
 		swapfile = false,
 		readonly = false,
 		filetype = '',
+		number = false,
+		relativenumber = false,
+		colorcolumn = '',
+		cursorcolumn = false,
+		spell = false,
 	}
 
 	for opt, val in pairs(options) do
 		vim.opt_local[opt] = val
 	end
 
+	local banner = {
+		height = #intro_message,
+		width = #intro_message[1],
+	}
 
-	vim.api.nvim_buf_set_lines(buf, 0, -1, false, { info_message })
+
+
+	vim.api.nvim_buf_set_lines(buf, 0, -1, false, intro_message)
 
 	vim.opt_local.readonly = true
 	vim.opt_local.modified = false
