@@ -69,6 +69,17 @@ local function show()
 		width = #intro_message[1],
 	}
 
+	local top = math.floor((height - banner.height) / 3)
+	local left = math.floor((width - banner.width) / 2)
+
+	local padding = string.rep(' ', left)
+	for i, line in pairs(intro_message) do
+		intro_message[i] = padding .. intro_message[i]
+	end
+
+	for i = 1, top do
+		table.insert(intro_message, 1, '')
+	end
 
 
 	vim.api.nvim_buf_set_lines(buf, 0, -1, false, intro_message)
