@@ -53,3 +53,6 @@ require 'status_line'
 
 -- Extras
 require 'extras'
+
+-- Initial screen
+require 'greetings'
