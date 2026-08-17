@@ -56,3 +56,6 @@ require 'extras'
 
 -- Initial screen
 require 'greetings'
+
+-- Smooth scrolling
+require 'scroll'

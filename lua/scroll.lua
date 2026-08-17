@@ -1,0 +1,6 @@
+--[[
+--
+--
+--  Simple smooth scrolling.
+--
+--]]
