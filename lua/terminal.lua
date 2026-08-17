@@ -68,12 +68,3 @@ setkey('n', '<leader>tr', open_terminal_vert_right, { desc = '[term] Open right'
 
 setkey('t', '<esc>', '<C-\\><C-n>', { desc = '[term][alias] leave terminal-mode' })
 setkey('t', '<M-q>', '<C-\\><C-n><cmd>close<cr>', { desc = '[term] Close' })
-
-
------------------
--- Navigation. --
------------------
-
-for k, v in pairs({h = 'left', j = 'down', k = 'up', l = 'right'}) do
-	setkey('t', '<M-' .. k .. '>', '<C-\\><C-n><C-w>' .. k, { desc = '[term] Window ' .. v })
-end
