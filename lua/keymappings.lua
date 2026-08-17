@@ -22,3 +22,14 @@ setkey('n', 'ge', 'G', { desc = '[move] end of file' })
 
 -- Search
 setkey('n', '<leader>l', '<cmd>nohlsearch<cr>', { desc = '[n] clear searh highlight' })
+
+-- Close help/quickfix/explorer window with 'q'
+vim.api.nvim_create_autocmd('FileType', {
+	pattern = { 'help', 'qf', 'netrw' },
+	callback = function()
+		setkey('n', 'q', '<C-w>c', {
+			buf = 0,
+			desc = '[alias] quickly quit help/qf/netrw windows',
+		})
+	end,
+})
