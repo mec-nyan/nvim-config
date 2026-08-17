@@ -48,12 +48,12 @@ local function show()
 	-- Set buffer options.
 	-- TODO: Some user options will need to be restored!
 	local options = {
-		-- bufhidden = 'wipe',
-		-- buflisted = false,
+		bufhidden = 'wipe',
+		buflisted = false,
 		list = false,
 		swapfile = false,
 		readonly = false,
-		filetype = '',
+		filetype = '',  -- TODO: set a special filetype so we can apply exclusive settings.
 		number = false,
 		relativenumber = false,
 		colorcolumn = '',
@@ -78,46 +78,65 @@ local function show()
 		intro_message[i] = padding .. intro_message[i]
 	end
 
-	local blank = string.rep(' ', width-1)
+	local blank = ''
 
 	for i = 1, top do
 		table.insert(intro_message, 1, blank)
 	end
 
-	for i = #intro_message, height do
-		table.insert(intro_message, #intro_message, blank)
-	end
-
-
-
 	vim.api.nvim_buf_set_lines(buf, 0, -1, false, intro_message)
 
 	-- Colours
 	local ns = vim.api.nvim_create_namespace('greetings_hl')
-	vim.api.nvim_set_hl(0, 'Neo', { fg = 'dodgerblue', bold = true })
-	vim.api.nvim_set_hl(0, 'Vim', { fg = 'limegreen', bold = true })
-	vim.api.nvim_set_hl(0, 'Cyoa', { fg = 'grey50', italic = true })
-	-- vim.api.nvim_win_set_hl_ns(win, ns)
 
-	vim.api.nvim_buf_set_extmark(buf, ns, top, left,
-		{ end_row = top, end_col = left + 25 , hl_group = 'Neo' })
-	vim.api.nvim_buf_set_extmark(buf, ns, top, left + 26,
-		{ end_row = top, end_col = left + 40 , hl_group = 'Vim' })
-	vim.api.nvim_buf_set_extmark(buf, ns, top + 1, left,
-		{ end_row = top + 2, end_col = 0 , hl_group = 'Cyoa' })
+	vim.api.nvim_set_hl(ns, 'Neo', { fg = 'dodgerblue', bold = true })
+	vim.api.nvim_set_hl(ns, 'Vim', { fg = 'limegreen', bold = true })
+	vim.api.nvim_set_hl(ns, 'Cyoa', { fg = 'grey50', italic = true })
 
-	local cmds = { ':help nvim', ':checkhealth', ':q', ':help' }
+	vim.api.nvim_win_set_hl_ns(win, ns)
+
+	-- NOTE: row and col are ZERO BASED.  Adjust accordingly ...
+	-- (That's why `top` and `left` give us the right row and col).
+	
+	local set_extmark = vim.api.nvim_buf_set_extmark
+	
+	local row = top
+	local col, end_col = intro_message[top+1]:find('N e o')
+
+	set_extmark(buf, ns, row, col - 1,
+		{ end_row = row, end_col = end_col, hl_group = 'Neo' })
+
+	col, end_col = intro_message[top+1]:find('v i m')
+
+	set_extmark(buf, ns, row, col - 1,
+		{ end_row = row, end_col = end_col, hl_group = 'Vim' })
+
+	row = row + 1
+
+	set_extmark(buf, ns, row, left,
+		{ end_row = row, end_col = #intro_message[row+1], hl_group = 'Cyoa' })
+
+	row = row + 1
+
 	for i = 1, 4 do
-		line = top + i + 2
-		vim.api.nvim_buf_set_extmark(buf, ns, line, left,
-			{ end_row = line, end_col = #intro_message[top + 1], hl_group = 'Cyoa' })
-		vim.api.nvim_buf_set_extmark(buf, ns, line, left + 28,
-			{ end_row = line, end_col = left + 28 + #cmds[i], hl_group = 'Vim' })
+		row = row + 1
+		set_extmark(buf, ns, row, left,
+			{ end_row = row, end_col = #intro_message[row+1], hl_group = 'Cyoa' })
+
+		col, end_col = intro_message[row+1]:find(':[%a%s]+')
+
+		set_extmark(buf, ns, row, col - 1,
+			{ end_row = row, end_col = end_col, hl_group = 'Vim' })
+
+		col, end_col = intro_message[row+1]:find('<%a+>')
+
+		set_extmark(buf, ns, row, col - 1,
+			{ end_row = row, end_col = end_col, hl_group = 'Neo' })
 	end
 
 	vim.opt_local.readonly = true
 	vim.opt_local.modified = false
-	print("buf: ", buf)
+	vim.opt_local.fillchars = 'eob: '
 end
 
 
