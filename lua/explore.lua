@@ -20,6 +20,3 @@ setkey('n', '<leader>he', '<cmd>Sexplore<cr>', { desc = 'files' })
 
 -- Explore in vertical split
 setkey('n', '<leader>ve', '<cmd>Vexplore<cr>', { desc = 'files' })
-
-
-return {}

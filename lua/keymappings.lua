@@ -22,6 +22,3 @@ setkey('n', 'ge', 'G', { desc = '[move] end of file' })
 
 -- Search
 setkey('n', '<leader>l', '<cmd>nohlsearch<cr>', { desc = '[n] clear searh highlight' })
-
-
-return {}

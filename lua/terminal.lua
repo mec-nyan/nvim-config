@@ -77,5 +77,3 @@ setkey('t', '<M-q>', '<C-\\><C-n><cmd>close<cr>', { desc = '[term] Close' })
 for k, v in pairs({h = 'left', j = 'down', k = 'up', l = 'right'}) do
 	setkey('t', '<M-' .. k .. '>', '<C-\\><C-n><C-w>' .. k, { desc = '[term] Window ' .. v })
 end
-
-return {}

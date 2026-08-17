@@ -27,5 +27,3 @@ vim.api.nvim_create_autocmd('FileType', {
 		vim.wo.winhighlight = 'Normal:Pmenu'
 	end
 })
-
-return {}

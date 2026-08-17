@@ -114,5 +114,3 @@ local function make_status_line()
 end
 
 vim.o.statusline = make_status_line()
-
-return {}

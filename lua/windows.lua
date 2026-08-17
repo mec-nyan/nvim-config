@@ -80,6 +80,3 @@ for _, opt in ipairs({
 		setkey(mode, key, cmd, { desc = description })
 	end
 end
-
-
-return {}

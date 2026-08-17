@@ -41,6 +41,3 @@ vim.diagnostic.config {
 		[hint] = '💡',
 	},
 }
-
-
-return {}
