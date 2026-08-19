@@ -62,3 +62,6 @@ require 'scroll'
 
 -- Comment madness!
 require 'decorate_comments'
+
+-- Auto pairs
+require 'pairs'

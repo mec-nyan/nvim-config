@@ -1,0 +1,7 @@
+--[[
+--
+--  Automatically close text pairs
+--
+--  () [] {} "" '' ``
+--
+--]]
