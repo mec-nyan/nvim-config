@@ -17,7 +17,7 @@ local ctrl_y = vim.api.nvim_replace_termcodes('<C-y>', false, false, true)
 
 
 ---------------
--- next page --
+-- Next page --
 ---------------
 
 local function make_callback_next(timer, amount)
@@ -51,7 +51,7 @@ end
 
 
 -------------------
--- previous page --
+-- Previous page --
 -------------------
 
 local function make_callback_prev(timer, amount)
@@ -87,7 +87,10 @@ end
 -- Move focused line around. --
 -------------------------------
 
--- Helpers.
+-------------
+-- Helpers --
+-------------
+
 local function make_callback_down(timer, amount)
 	local start = 0
 
@@ -118,7 +121,9 @@ local function make_callback_up(timer, amount)
 end
 
 
--- Centre:
+------------
+-- Centre --
+------------
 
 local function cursor_line_to_centre()
 	local heigth = vim.api.nvim_win_get_height(0)
@@ -140,7 +145,9 @@ local function cursor_line_to_centre()
 	return timer
 end
 
--- Top
+---------
+-- Top --
+---------
 
 local function cursor_line_to_top()
 	local offset = vim.wo.scrolloff
@@ -156,7 +163,9 @@ local function cursor_line_to_top()
 	return timer
 end
 
--- Bottom
+------------
+-- Bottom --
+------------
 
 local function cursor_line_to_bottom()
 	-- TODO: Check if there are enough lines above to scroll all the way down.
@@ -170,6 +179,9 @@ local function cursor_line_to_bottom()
 	return timer
 end
 
+------------------
+-- Key mappings --
+------------------
 
 setkey('n', '<C-d>', scroll_next, { desc = '[scroll] page down' })
 setkey('n', '<C-u>', scroll_prev, { desc = '[scroll] page up' })
