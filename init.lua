@@ -59,3 +59,6 @@ require 'greetings'
 
 -- Smooth scrolling
 require 'scroll'
+
+-- Comment madness!
+require 'decorate_comments'
