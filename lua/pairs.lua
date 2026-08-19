@@ -85,3 +85,10 @@ setkey('i', '<backspace>', function()
 		return '<backspace>'
 	end
 end, { desc = '[pairs] backspace', expr = true})
+
+
+-- Clear the stack
+vim.api.nvim_create_user_command('PairsReset', function()
+	stack = {}
+end, { desc = 'Clear pairs\' stack'}
+)
