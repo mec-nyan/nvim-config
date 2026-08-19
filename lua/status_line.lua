@@ -73,13 +73,13 @@ local file_type_icons = {
 	vim = '%5* Vim %*'
 }
 
-filetype = " %{% { "
+filetype = " %{% get({ "
 
 for k, v in pairs(file_type_icons) do
 	filetype = filetype .. string.format("'%s': '%s', ", k, v)
 end
 
-filetype = filetype .. "}[&filetype] %} "
+filetype = filetype .. "}, &filetype, &filetype) %} "
 
 local quickfix = '%q'          -- Quickfix List and Location List.
 local bufnr = '%n'             -- Buffer number.
