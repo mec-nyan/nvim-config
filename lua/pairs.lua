@@ -48,7 +48,7 @@ for opening, closing in pairs(_pairs) do
 		-- Same character pairs like "" and '' etc.
 		setkey('i', opening, function()
 			if stack[#stack] ~= opening then
-				stack[#stack] = opening
+				stack[#stack + 1] = opening
 				return pair .. '<left>'
 			else
 				local col = vim.fn.col('.')
@@ -65,3 +65,23 @@ for opening, closing in pairs(_pairs) do
 
 	end
 end
+
+
+-- Delete empty pair from within.
+setkey('i', '<backspace>', function()
+	if #stack == 0 then
+		return '<backspace>'
+	end
+
+	local col = vim.fn.col('.')
+	local line = vim.fn.getline('.')
+	local current = line:sub(col - 1, col - 1)
+	local next = line:sub(col, col)
+
+	if stack[#stack] == current and _pairs[current] == next then
+		stack[#stack] = nil
+		return '<right><backspace><backspace>'
+	else
+		return '<backspace>'
+	end
+end, { desc = '[pairs] backspace', expr = true})
