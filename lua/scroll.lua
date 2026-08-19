@@ -49,7 +49,6 @@ local function scroll_next()
 	return timer
 end
 
-setkey('n', '<C-d>', scroll_next, { desc = '[scroll] page down' })
 
 -------------------
 -- previous page --
@@ -82,8 +81,6 @@ local function scroll_prev()
 
 	return timer
 end
-
-setkey('n', '<C-u>', scroll_prev, { desc = '[scroll] page up' })
 
 
 -------------------------------
@@ -162,6 +159,7 @@ end
 -- Bottom
 
 local function cursor_line_to_bottom()
+	-- TODO: Check if there are enough lines above to scroll all the way down.
 	local offset = vim.wo.scrolloff
 	local heigth = vim.api.nvim_win_get_height(0)
 	local pos = vim.fn.winline()
@@ -171,3 +169,11 @@ local function cursor_line_to_bottom()
 	
 	return timer
 end
+
+
+setkey('n', '<C-d>', scroll_next, { desc = '[scroll] page down' })
+setkey('n', '<C-u>', scroll_prev, { desc = '[scroll] page up' })
+
+setkey('n', 'zt', cursor_line_to_top, { desc = '[scroll] cursor line to top' })
+setkey('n', 'zz', cursor_line_to_centre, { desc = '[scroll] cursor line to centre' })
+setkey('n', 'zb', cursor_line_to_bottom, { desc = '[scroll] cursor line to bottom' })
