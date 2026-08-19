@@ -20,7 +20,7 @@ local ctrl_y = vim.api.nvim_replace_termcodes('<C-y>', false, false, true)
 -- next page --
 ---------------
 
-local function make_cb_next(timer, amount)
+local function make_callback_next(timer, amount)
 	local start = 0
 
 	return function()
@@ -44,7 +44,7 @@ local function scroll_next()
 	local amount = vim.wo.scroll
 	local timer = vim.uv.new_timer()
 
-	timer:start(0, delay, vim.schedule_wrap(make_cb_next(timer, amount)))
+	timer:start(0, delay, vim.schedule_wrap(make_callback_next(timer, amount)))
 
 	return timer
 end
@@ -55,7 +55,7 @@ setkey('n', '<C-d>', scroll_next, { desc = '[scroll] page down' })
 -- previous page --
 -------------------
 
-local function make_cb_prev(timer, amount)
+local function make_callback_prev(timer, amount)
 	local start = 0
 
 	return function()
@@ -78,7 +78,7 @@ local function scroll_prev()
 	local amount = vim.wo.scroll
 	local timer = vim.uv.new_timer()
 
-	timer:start(0, delay, vim.schedule_wrap(make_cb_prev(timer, amount)))
+	timer:start(0, delay, vim.schedule_wrap(make_callback_prev(timer, amount)))
 
 	return timer
 end
