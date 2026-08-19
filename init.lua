@@ -65,3 +65,6 @@ require 'decorate_comments'
 
 -- Auto pairs
 require 'pairs'
+
+-- More text objects
+require 'text_objects'
