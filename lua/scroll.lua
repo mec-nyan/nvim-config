@@ -143,3 +143,31 @@ local function cursor_line_to_centre()
 	return timer
 end
 
+-- Top
+
+local function cursor_line_to_top()
+	local offset = vim.wo.scrolloff
+	local pos = vim.fn.winline()
+	if pos <= offset + 1 then
+		return
+	end
+
+	local amount = pos - offset
+	local timer = vim.uv.new_timer()
+	timer:start(0, delay, vim.schedule_wrap(make_callback_down(timer, amount)))
+
+	return timer
+end
+
+-- Bottom
+
+local function cursor_line_to_bottom()
+	local offset = vim.wo.scrolloff
+	local heigth = vim.api.nvim_win_get_height(0)
+	local pos = vim.fn.winline()
+	local amount = heigth - (pos + offset)
+	local timer = vim.uv.new_timer()
+	timer:start(0, delay, vim.schedule_wrap(make_callback_up(timer, amount)))
+	
+	return timer
+end
