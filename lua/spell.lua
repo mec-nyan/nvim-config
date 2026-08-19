@@ -1,0 +1,7 @@
+--[[
+--
+--
+--  Spelling suggestions pop-up.
+--
+--
+--]]

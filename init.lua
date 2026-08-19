@@ -68,3 +68,6 @@ require 'pairs'
 
 -- More text objects
 require 'text_objects'
+
+-- Spelling suggestions pop-up
+require 'spell'
