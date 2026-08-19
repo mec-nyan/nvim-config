@@ -6,6 +6,8 @@
 --]]
 
 
+local setkey = vim.keymap.set
+
 local delay = 14
 
 local ctrl_e_j = vim.api.nvim_replace_termcodes('<C-e>j', false, false, true)
@@ -47,6 +49,7 @@ local function scroll_next()
 	return timer
 end
 
+setkey('n', '<C-d>', scroll_next, { desc = '[scroll] page down' })
 
 -------------------
 -- previous page --
@@ -80,8 +83,63 @@ local function scroll_prev()
 	return timer
 end
 
-
-local setkey = vim.keymap.set
-
 setkey('n', '<C-u>', scroll_prev, { desc = '[scroll] page up' })
-setkey('n', '<C-d>', scroll_next, { desc = '[scroll] page down' })
+
+
+-------------------------------
+-- Move focused line around. --
+-------------------------------
+
+-- Helpers.
+local function make_callback_down(timer, amount)
+	local start = 0
+
+	return function()
+		if start == amount then
+			timer:stop()
+			timer:close()
+		end
+		
+		vim.api.nvim_feedkeys(ctrl_e, 'n', false)
+		start = start + 1
+	end
+end
+
+
+local function make_callback_up(timer, amount)
+	local start = 0
+
+	return function()
+		if start == amount then
+			timer:stop()
+			timer:close()
+		end
+		
+		vim.api.nvim_feedkeys(ctrl_y, 'n', false)
+		start = start + 1
+	end
+end
+
+
+-- Centre:
+
+local function cursor_line_to_centre()
+	local heigth = vim.api.nvim_win_get_height(0)
+	local centre = math.floor(heigth / 2)
+	local pos = vim.fn.winline()
+
+	if pos == centre then
+		return
+	end
+
+	local timer = vim.uv.new_timer()
+
+	if pos > centre then
+		timer:start(0, delay, vim.schedule_wrap(make_callback_down(timer, pos - centre)))
+	else
+		timer:start(0, delay, vim.schedule_wrap(make_callback_up(timer, centre - pos)))
+	end
+
+	return timer
+end
+
