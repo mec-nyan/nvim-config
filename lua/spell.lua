@@ -45,7 +45,7 @@ local function popup()
 		row = 1,
 		col = 0,
 		style = 'minimal',
-		title = string.format("( %d )", #suggestions)
+		title = string.format(" 1/%d ", #suggestions)
 	})
 
 	local set_value = vim.api.nvim_set_option_value
@@ -103,6 +103,17 @@ vim.api.nvim_create_autocmd('FileType', {
 		end, {
 			buf = 0,
 			desc = '[spell] accept',
+		})
+
+		-- Update title
+
+		vim.api.nvim_create_autocmd('CursorMoved', {
+			callback = function()
+				local total = vim.fn.line('$')
+				local current = vim.fn.line('.')
+				vim.api.nvim_win_set_config(0, { title = string.format(' %d/%d ', current, total) })
+			end,
+			buf = 0,
 		})
 	end,
 })
