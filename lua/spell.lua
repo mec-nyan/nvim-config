@@ -48,8 +48,17 @@ local function popup()
 		title = string.format("( %d )", #suggestions)
 	})
 
-	vim.api.nvim_set_option_value('filetype', 'spell_suggestions_popup', { buf = new_buf })
+	local set_value = vim.api.nvim_set_option_value
+
+	set_value('filetype', 'spell_suggestions_popup', { buf = new_buf })
 	vim.api.nvim_win_set_buf(spell_win, new_buf)
+
+	set_value('number', true, { win = spell_win })
+	set_value('numberwidth', 2, { win = spell_win })
+	set_value('relativenumber', false, { win = spell_win })
+	set_value('foldcolumn', '0', { win = spell_win })
+	set_value('winhighlight', 'Normal:Normal,FloatBorder:Keyword', { win = spell_win })
+	set_value('cursorline', true, { win = spell_win, scope = 'local' })
 end
 
 
