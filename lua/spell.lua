@@ -8,7 +8,13 @@
 
 
 local function popup()
-	local suggestions = vim.fn.spellsuggest(vim.fn.expand('<cword>'))
+	local current_word = vim.fn.expand('<cword>')
+	if current_word:match('^%s*$') then
+		vim.notify('There\'s no word there...', vim.log.levels.INFO, {})
+		return
+	end
+
+	local suggestions = vim.fn.spellsuggest(current_word)
 
 	if #suggestions == 0 then
 		vim.notify('No suggestions', vim.log.levels.INFO, {})
@@ -38,7 +44,8 @@ local function popup()
 		width = min_width,
 		row = 1,
 		col = 0,
-		style = 'minimal'
+		style = 'minimal',
+		title = string.format("( %d )", #suggestions)
 	})
 
 	vim.api.nvim_set_option_value('filetype', 'spell_suggestions_popup', { buf = new_buf })
