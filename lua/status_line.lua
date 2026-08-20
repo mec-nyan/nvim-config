@@ -43,10 +43,15 @@ mode = mode .." } ) %}"
 -- File --
 ----------
 
-local file = '%<%9*%f%*'
+local file = '%<📃 %9*%f%*'
 
-local flags = '%h%w%m%r'
+-- local flags = '%h%w%m%r'
 
+local is_help = "%{% luaeval('vim.bo.filetype == \"help\" and \"📜 \" or \"\"')%}"
+local ro = "%{% luaeval('vim.bo.modifiable and \"\" or \"🔒 \"') %}"
+local modified = "%{% luaeval('vim.bo.modified and \"🗡️ \" or \"\"') %}"
+
+local flags = is_help .. "%w" .. modified .. ro
 
 --------------------------------------
 -- Nice icons/emojis for filetypes! --
