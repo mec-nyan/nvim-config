@@ -105,24 +105,24 @@ local ruler =  " %{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rul
 -- Git branch --
 ----------------
 
-local branch = " %{ trim(system('[[ -d .git ]] && git branch --show-current'))} -"
+local branch = "%4*  %{ trim(system('[[ -d .git ]] && git branch --show-current'))} %*"
 
 -- Example:
 
 
 local function make_status_line()
 	-- TODO: Get the colours from the theme.
-	vim.cmd.highlight { "User1", "guibg=slateblue", "guifg=white", "gui=italic" }
-	vim.cmd.highlight { "User2", "guibg=hotpink", "guifg=white", "gui=italic" }
-	vim.cmd.highlight { "User3", "guibg=purple", "guifg=white", "gui=italic" }
-	vim.cmd.highlight { "User4", "guibg=yellowgreen", "guifg=black", "gui=italic" }
-	vim.cmd.highlight { "User5", "guibg=green", "guifg=white", "gui=italic" }
-	vim.cmd.highlight { "User6", "guibg=indianred", "guifg=white", "gui=italic" }
-	vim.cmd.highlight { "User7", "guibg=none", "guifg=darkorange", "gui=bold" }
+	vim.cmd.highlight { "User1", "guibg=slateblue", "guifg=white", "gui=NONE" }
+	vim.cmd.highlight { "User2", "guibg=hotpink", "guifg=white", "gui=NONE" }
+	vim.cmd.highlight { "User3", "guibg=purple", "guifg=white", "gui=NONE" }
+	vim.cmd.highlight { "User4", "guibg=yellowgreen", "guifg=black", "gui=NONE" }
+	vim.cmd.highlight { "User5", "guibg=green", "guifg=white", "gui=NONE" }
+	vim.cmd.highlight { "User6", "guibg=indianred", "guifg=white", "gui=NONE" }
+	vim.cmd.highlight { "User7", "guibg=none", "guifg=darkorange", "gui=NONE" }
 	vim.cmd.highlight { "User8", "guibg=none", "guifg=dodgerblue", "gui=bold" }
 	vim.cmd.highlight { "User9", "guibg=none", "guifg=grey40" }
 
-	return string.format("%s%%* %s %s %s %%= %s buf: %s - %s", mode, branch, file, flags, filetype, bufnr, ruler)
+	return string.format("%s%%*%s %s %s %%= %s buf: %s - %s", mode, branch, file, flags, filetype, bufnr, ruler)
 end
 
 vim.o.statusline = make_status_line()
