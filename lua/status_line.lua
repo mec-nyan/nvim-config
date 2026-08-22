@@ -101,7 +101,14 @@ local showcmd = '%S'
 
 local ruler =  " %{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %}"
 
+----------------
+-- Git branch --
+----------------
+
+local branch = "%{ system('[[ -d .git ]] && git branch --show-current')}"
+
 -- Example:
+
 
 local function make_status_line()
 	-- TODO: Get the colours from the theme.
@@ -115,7 +122,7 @@ local function make_status_line()
 	vim.cmd.highlight { "User8", "guibg=none", "guifg=dodgerblue", "gui=bold" }
 	vim.cmd.highlight { "User9", "guibg=none", "guifg=grey40" }
 
-	return string.format("%s%%* %s %s %%= %s buf: %s - %s", mode, file, flags, filetype, bufnr, ruler)
+	return string.format("%s%%* %s %s %s %%= %s buf: %s - %s", mode, branch, file, flags, filetype, bufnr, ruler)
 end
 
 vim.o.statusline = make_status_line()
