@@ -138,26 +138,26 @@ return {
 		local mode = vim.api.nvim_get_mode().mode
 
 		if mode == 'n' then
-			vim.cmd.highlight { 'User1', 'guibg=slateblue', 'guifg=white', 'gui=italic' }
-			vim.cmd.highlight { "User2", "guibg=NONE", "guifg=slateblue", "gui=NONE" }
+			vim.cmd({ cmd = 'highlight', args = { 'User1', 'guibg=slateblue', 'guifg=white', 'gui=italic' }, bang = true })
+			vim.cmd({ cmd = 'highlight', args = { "User2", "guibg=NONE", "guifg=slateblue", "gui=NONE" }, bang = true })
 		elseif mode == 'i' then
-			vim.cmd.highlight { 'User1', 'guibg=hotpink', 'guifg=white', 'gui=italic' }
-			vim.cmd.highlight { "User2", "guibg=NONE", "guifg=hotpink", "gui=NONE" }
+			vim.cmd({ cmd = 'highlight', args = { 'User1', 'guibg=hotpink', 'guifg=white', 'gui=italic' }, bang = true })
+			vim.cmd({ cmd = 'highlight', args = { "User2", "guibg=NONE", "guifg=hotpink", "gui=NONE" }, bang = true })
 		elseif mode == 'v' or mode == 'V' then
-			vim.cmd.highlight { 'User1', 'guibg=purple', 'guifg=white', 'gui=italic' }
-			vim.cmd.highlight { "User2", "guibg=NONE", "guifg=purple", "gui=NONE" }
+			vim.cmd({ cmd = 'highlight', args = { 'User1', 'guibg=purple', 'guifg=white', 'gui=italic' }, bang = true })
+			vim.cmd({ cmd = 'highlight', args = { "User2", "guibg=NONE", "guifg=purple", "gui=NONE" }, bang = true })
 		elseif mode == 't' then
-			vim.cmd.highlight { 'User1', 'guibg=yellowgreen', 'guifg=black', 'gui=italic' }
-			vim.cmd.highlight { "User2", "guibg=NONE", "guifg=yellowgreen", "gui=NONE" }
+			vim.cmd({ cmd = 'highlight', args = { 'User1', 'guibg=yellowgreen', 'guifg=black', 'gui=italic' }, bang = true })
+			vim.cmd({ cmd = 'highlight', args = { "User2", "guibg=NONE", "guifg=yellowgreen", "gui=NONE" }, bang = true })
 		elseif mode == 'c' then
-			vim.cmd.highlight { 'User1', 'guibg=orange', 'guifg=black', 'gui=italic' }
-			vim.cmd.highlight { "User2", "guibg=NONE", "guifg=orange", "gui=NONE" }
+			vim.cmd({ cmd = 'highlight', args = { 'User1', 'guibg=orange', 'guifg=black', 'gui=italic' }, bang = true })
+			vim.cmd({ cmd = 'highlight', args = { "User2", "guibg=NONE", "guifg=orange", "gui=NONE" }, bang = true })
 		elseif mode == 'r' or mode == 'R' then
-			vim.cmd.highlight { 'User1', 'guibg=indianred', 'guifg=white', 'gui=italic' }
-			vim.cmd.highlight { "User2", "guibg=NONE", "guifg=indianred", "gui=NONE" }
+			vim.cmd({ cmd = 'highlight', args = { 'User1', 'guibg=indianred', 'guifg=white', 'gui=italic' }, bang = true })
+			vim.cmd({ cmd = 'highlight', args = { "User2", "guibg=NONE", "guifg=indianred", "gui=NONE" }, bang = true })
 		elseif mode == 'rm' then
-			vim.cmd.highlight { 'User1', 'guibg=dodgerblue', 'guifg=white', 'gui=italic' }
-			vim.cmd.highlight { "User2", "guibg=NONE", "guifg=dodgerblue", "gui=NONE" }
+			vim.cmd({ cmd = 'highlight', args = { 'User1', 'guibg=dodgerblue', 'guifg=white', 'gui=italic' }, bang = true })
+			vim.cmd({ cmd = 'highlight', args = { "User2", "guibg=NONE", "guifg=dodgerblue", "gui=NONE" }, bang = true })
 		end
 
 		local modes = {
