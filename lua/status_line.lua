@@ -18,6 +18,7 @@ local default_sl = "%<%f %h%w%m%r %{% v:lua.require('vim._core.util').term_exitc
 -- Mode indicator --
 --------------------
 
+--[[
 local nvim_modes = {
 	n = '%1* nor ',
 	i = '%2* ins ',
@@ -38,12 +39,13 @@ end
 
 mode = mode .." } ) %}"
 
+--]]
 
 ----------
 -- File --
 ----------
 
-local file = '%<📃 %9*%f%*'
+local file = '%<📃 %3*%f%*'
 
 -- local flags = '%h%w%m%r'
 
@@ -105,16 +107,19 @@ local ruler =  " %{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rul
 -- Git branch --
 ----------------
 
-local branch = "%4*  %{ trim(system('[[ -d .git ]] && git branch --show-current'))} %*"
+local branch = "%2*  %{ trim(system('[[ -d .git ]] && git branch --show-current'))} %*"
 
 -- Example:
 
 
 local function make_status_line()
 	-- TODO: Get the colours from the theme.
+	-- User1: mode
 	vim.cmd.highlight { "User1", "guibg=slateblue", "guifg=white", "gui=italic" }
-	vim.cmd.highlight { "User2", "guibg=hotpink", "guifg=white", "gui=NONE" }
-	vim.cmd.highlight { "User3", "guibg=purple", "guifg=white", "gui=NONE" }
+	-- User2: branch
+	vim.cmd.highlight { "User2", "guibg=NONE", "guifg=slateblue", "gui=NONE" }
+	-- User3: file
+	vim.cmd.highlight { "User3", "guibg=NONE", "guifg=grey40", "gui=NONE" }
 	vim.cmd.highlight { "User4", "guibg=yellowgreen", "guifg=black", "gui=NONE" }
 	vim.cmd.highlight { "User5", "guibg=green", "guifg=white", "gui=NONE" }
 	vim.cmd.highlight { "User6", "guibg=indianred", "guifg=white", "gui=NONE" }
@@ -134,18 +139,25 @@ return {
 
 		if mode == 'n' then
 			vim.cmd.highlight { 'User1', 'guibg=slateblue', 'guifg=white', 'gui=italic' }
+			vim.cmd.highlight { "User2", "guibg=NONE", "guifg=slateblue", "gui=NONE" }
 		elseif mode == 'i' then
 			vim.cmd.highlight { 'User1', 'guibg=hotpink', 'guifg=white', 'gui=italic' }
+			vim.cmd.highlight { "User2", "guibg=NONE", "guifg=hotpink", "gui=NONE" }
 		elseif mode == 'v' or mode == 'V' then
 			vim.cmd.highlight { 'User1', 'guibg=purple', 'guifg=white', 'gui=italic' }
+			vim.cmd.highlight { "User2", "guibg=NONE", "guifg=purple", "gui=NONE" }
 		elseif mode == 't' then
-			vim.cmd.highlight { 'User1', 'guibg=yellowgreen', 'guifg=white', 'gui=italic' }
+			vim.cmd.highlight { 'User1', 'guibg=yellowgreen', 'guifg=black', 'gui=italic' }
+			vim.cmd.highlight { "User2", "guibg=NONE", "guifg=yellowgreen", "gui=NONE" }
 		elseif mode == 'c' then
-			vim.cmd.highlight { 'User1', 'guibg=orange', 'guifg=white', 'gui=italic' }
+			vim.cmd.highlight { 'User1', 'guibg=orange', 'guifg=black', 'gui=italic' }
+			vim.cmd.highlight { "User2", "guibg=NONE", "guifg=orange", "gui=NONE" }
 		elseif mode == 'r' or mode == 'R' then
 			vim.cmd.highlight { 'User1', 'guibg=indianred', 'guifg=white', 'gui=italic' }
+			vim.cmd.highlight { "User2", "guibg=NONE", "guifg=indianred", "gui=NONE" }
 		elseif mode == 'rm' then
 			vim.cmd.highlight { 'User1', 'guibg=dodgerblue', 'guifg=white', 'gui=italic' }
+			vim.cmd.highlight { "User2", "guibg=NONE", "guifg=dodgerblue", "gui=NONE" }
 		end
 
 		local modes = {
