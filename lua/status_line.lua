@@ -20,9 +20,9 @@ local default_sl = "%<%f %h%w%m%r %{% v:lua.require('vim._core.util').term_exitc
 
 local nvim_modes = {
 	n = '%1* nor ',
+	i = '%2* ins ',
 	v = '%3* vis ',
 	V = '%3* vis ',
-	i = '%2* ins ',
 	t = '%4* ter ',
 	c = '%5* com ',
 	R = '%6* rep ',
@@ -112,7 +112,7 @@ local branch = "%4*  %{ trim(system('[[ -d .git ]] && git branch --show-curre
 
 local function make_status_line()
 	-- TODO: Get the colours from the theme.
-	vim.cmd.highlight { "User1", "guibg=slateblue", "guifg=white", "gui=NONE" }
+	vim.cmd.highlight { "User1", "guibg=slateblue", "guifg=white", "gui=italic" }
 	vim.cmd.highlight { "User2", "guibg=hotpink", "guifg=white", "gui=NONE" }
 	vim.cmd.highlight { "User3", "guibg=purple", "guifg=white", "gui=NONE" }
 	vim.cmd.highlight { "User4", "guibg=yellowgreen", "guifg=black", "gui=NONE" }
@@ -122,7 +122,44 @@ local function make_status_line()
 	vim.cmd.highlight { "User8", "guibg=none", "guifg=dodgerblue", "gui=bold" }
 	vim.cmd.highlight { "User9", "guibg=none", "guifg=grey40" }
 
-	return string.format("%s%%*%s %s %s %%= %s buf: %s - %s", mode, branch, file, flags, filetype, bufnr, ruler)
+	return string.format("%%{%% v:lua.require'status_line'.get_mode() %%}%s %s %s %%= %s buf: %s - %s",
+		branch, file, flags, filetype, bufnr, ruler)
 end
 
 vim.o.statusline = make_status_line()
+
+return {
+	get_mode = function()
+		local mode = vim.api.nvim_get_mode().mode
+
+		if mode == 'n' then
+			vim.cmd.highlight { 'User1', 'guibg=slateblue', 'guifg=white', 'gui=italic' }
+		elseif mode == 'i' then
+			vim.cmd.highlight { 'User1', 'guibg=hotpink', 'guifg=white', 'gui=italic' }
+		elseif mode == 'v' or mode == 'V' then
+			vim.cmd.highlight { 'User1', 'guibg=purple', 'guifg=white', 'gui=italic' }
+		elseif mode == 't' then
+			vim.cmd.highlight { 'User1', 'guibg=yellowgreen', 'guifg=white', 'gui=italic' }
+		elseif mode == 'c' then
+			vim.cmd.highlight { 'User1', 'guibg=orange', 'guifg=white', 'gui=italic' }
+		elseif mode == 'r' or mode == 'R' then
+			vim.cmd.highlight { 'User1', 'guibg=indianred', 'guifg=white', 'gui=italic' }
+		elseif mode == 'rm' then
+			vim.cmd.highlight { 'User1', 'guibg=dodgerblue', 'guifg=white', 'gui=italic' }
+		end
+
+		local modes = {
+			n = 'nor',
+			i = 'ins',
+			v = 'vis',
+			V = 'VIS',
+			t = 'tty',
+			c = 'com',
+			r = 'rep',
+			R = 'REP',
+			rm = 'more',
+		}
+
+		return string.format("%%1* %s %%*", modes[mode])
+	end,
+}
