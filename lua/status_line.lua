@@ -105,7 +105,7 @@ local ruler =  " %{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rul
 -- Git branch --
 ----------------
 
-local branch = "%{ system('[[ -d .git ]] && git branch --show-current')}"
+local branch = " %{ trim(system('[[ -d .git ]] && git branch --show-current'))} -"
 
 -- Example:
 
