@@ -65,8 +65,8 @@ local file_type_icons = {
 	[''] = '🩵💚',                 -- empty buffer i.e. start screen.
 	lua = '🌙',
 	python = '🐍',
-	c = '%8*⟨ C ⟩%*',
-	cpp = '%8*⟨C++⟩%*',
+	c = '%7*⟨ C ⟩%*',
+	cpp = '%7*⟨C++⟩%*',
 	rust = '🦀',
 	help = '🪓',
 	go = '🐹',
@@ -107,7 +107,7 @@ local ruler =  " %{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rul
 -- Git branch --
 ----------------
 
-local branch = "%2*  %{ trim(system('[[ -d .git ]] && git branch --show-current'))} %*"
+local branch = "  %{ trim(system('[[ -d .git ]] && git branch --show-current'))} %*"
 
 -- Example:
 
@@ -149,13 +149,18 @@ vim.api.nvim_create_autocmd({'VimEnter', 'ColorScheme'}, {
 			vim.cmd { cmd = 'highlight', args = { 'User5', 'guibg=green', 'guifg=white', 'gui=NONE' } }
 			vim.cmd { cmd = 'highlight', args = { 'User6', 'guibg=indianred', 'guifg=white', 'gui=NONE' } }
 			vim.cmd { cmd = 'highlight', args = { 'User7', 'guibg=NONE', 'guifg=darkorange', 'gui=NONE' } }
-			vim.cmd { cmd = 'highlight', args = { 'User8', 'guibg=NONE', 'guifg=dodgerblue', 'gui=NONE' } }
-			-- vim.cmd { cmd = 'highlight', args = { 'User9', 'guibg=NONE', 'guifg=', 'gui=NONE' } }
+
+			-- Cmdline workaround.
+			local type_hl = vim.api.nvim_get_hl(0, { name = 'Type' })
+			fg = type_hl.fg and tohex(type_hl.fg) or 'yellow'
+			vim.cmd { cmd = 'highlight', args = { 'User8', 'guibg=' .. fg, 'guifg=black', 'gui=italic' } }
+			vim.cmd { cmd = 'highlight', args = { 'User9', 'guibg=NONE', 'guifg=' .. fg, 'gui=NONE' } }
 		end)
 	end,
 })
 
 vim.api.nvim_create_autocmd({'ModeChanged'}, {
+	pattern = { '*:n*', '*:v*', '*:V*', '*:CTRL-V*', '*:s*', '*:S*', '*:i*', '*:R*', '*:r*', '*:t*' },
 	callback = function()
 		local mode = vim.fn.mode()
 		if #mode < 1 then return end
@@ -221,6 +226,10 @@ return {
 			r = 'rep',
 		}
 
-		return string.format("%%1* %s %%*", modes[mode])
+		-- Workaround: statusline doesn't update on `cmdline` mode.
+		local user1 = mode == 'c' and 8 or 1
+		local user2 = mode == 'c' and 9 or 2
+
+		return string.format("%%%d* %s %%*%%%d*", user1, modes[mode], user2)
 	end,
 }
