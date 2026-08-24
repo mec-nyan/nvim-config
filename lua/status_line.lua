@@ -155,32 +155,59 @@ vim.api.nvim_create_autocmd({'VimEnter', 'ColorScheme'}, {
 	end,
 })
 
+vim.api.nvim_create_autocmd({'ModeChanged'}, {
+	callback = function()
+		local mode = vim.fn.mode()
+		if #mode < 1 then return end
+
+		mode = mode:lower():sub(1, 1)
+
+		local get_hl = function(name) return vim.api.nvim_get_hl(0, { name = name }) end
+
+		local groups = {}
+
+		for k, v in pairs {
+			kwd = { name = 'Keyword', default = '7b68ee' },      -- Medium slate blue.
+			fun = { name = 'Function', default = 'ff69b4' },     -- Hot pink.
+			str = { name = 'String', default = '7cfc00' },       -- Lime green.
+			err = { name = 'ErrorMsg', default = 'cd5c5c' },     -- Indian red.
+			type = { name = 'Type', default = 'ffff00' },        -- Yellow.
+			ok = { name = 'OkMsg', default = '9acd32' },         -- Yellow green.
+		} do
+			groups[k] = get_hl(v.name).fg or v.default
+		end
+
+		local fg
+
+		if mode == 'i' then
+			fg = tohex(groups.ok)
+		elseif mode == 'v' then
+			fg = tohex(groups.kwd)
+		elseif mode == 't' then
+			fg = tohex(groups.str)
+		elseif mode == 'c' then
+			fg = tohex(groups.type)
+		elseif mode == 'r' then
+			fg = tohex(groups.err)
+		elseif mode == 'n' then
+			fg = tohex(groups.fun)
+		else
+			fg = tohex(groups.err)
+		end
+
+		vim.cmd { cmd = 'highlight', args = { 'clear', 'User1' } }
+		vim.cmd { cmd = 'highlight', args = { 'clear', 'User2' } }
+
+		vim.cmd { cmd = 'highlight', args = { 'User1', 'guibg=' .. fg, 'guifg=black' }, bang = true }
+		vim.cmd { cmd = 'highlight', args = { 'User2', 'guibg=NONE', 'guifg=' .. fg }, bang = true }
+
+		vim.cmd { cmd = 'redrawstatus', bang = true }
+	end
+})
+
 return {
 	get_mode = function()
 		local mode = vim.api.nvim_get_mode().mode
-
-		if mode == 'n' then
-			vim.cmd({ cmd = 'highlight', args = { 'User1', 'guibg=slateblue', 'guifg=white', 'gui=italic' }, bang = true })
-			vim.cmd({ cmd = 'highlight', args = { "User2", "guibg=NONE", "guifg=slateblue", "gui=NONE" }, bang = true })
-		elseif mode == 'i' then
-			vim.cmd({ cmd = 'highlight', args = { 'User1', 'guibg=hotpink', 'guifg=white', 'gui=italic' }, bang = true })
-			vim.cmd({ cmd = 'highlight', args = { "User2", "guibg=NONE", "guifg=hotpink", "gui=NONE" }, bang = true })
-		elseif mode == 'v' or mode == 'V' then
-			vim.cmd({ cmd = 'highlight', args = { 'User1', 'guibg=purple', 'guifg=white', 'gui=italic' }, bang = true })
-			vim.cmd({ cmd = 'highlight', args = { "User2", "guibg=NONE", "guifg=purple", "gui=NONE" }, bang = true })
-		elseif mode == 't' then
-			vim.cmd({ cmd = 'highlight', args = { 'User1', 'guibg=yellowgreen', 'guifg=black', 'gui=italic' }, bang = true })
-			vim.cmd({ cmd = 'highlight', args = { "User2", "guibg=NONE", "guifg=yellowgreen", "gui=NONE" }, bang = true })
-		elseif mode == 'c' then
-			vim.cmd({ cmd = 'highlight', args = { 'User1', 'guibg=orange', 'guifg=black', 'gui=italic' }, bang = true })
-			vim.cmd({ cmd = 'highlight', args = { "User2", "guibg=NONE", "guifg=orange", "gui=NONE" }, bang = true })
-		elseif mode == 'r' or mode == 'R' then
-			vim.cmd({ cmd = 'highlight', args = { 'User1', 'guibg=indianred', 'guifg=white', 'gui=italic' }, bang = true })
-			vim.cmd({ cmd = 'highlight', args = { "User2", "guibg=NONE", "guifg=indianred", "gui=NONE" }, bang = true })
-		elseif mode == 'rm' then
-			vim.cmd({ cmd = 'highlight', args = { 'User1', 'guibg=dodgerblue', 'guifg=white', 'gui=italic' }, bang = true })
-			vim.cmd({ cmd = 'highlight', args = { "User2", "guibg=NONE", "guifg=dodgerblue", "gui=NONE" }, bang = true })
-		end
 
 		local modes = {
 			n = 'nor',
