@@ -69,6 +69,7 @@ end
 
 filetype = filetype .. "}, &filetype, &filetype) %} "
 
+-- NOTE: Am I even using these?
 local quickfix = '%q'          -- Quickfix List and Location List.
 local bufnr = '%n'             -- Buffer number.
 local linenr = '%l'            -- Line number.
@@ -82,6 +83,7 @@ local showcmd = '%S'
 -- Ruler --
 -----------
 
+-- TODO: Implement the workaround for cmdline mode.
 local ruler =  " %{% &ruler ? ( &rulerformat == '' ? '%3*%-14.(%l,%c%V%)%1* %P ' : &rulerformat ) : '' %}"
 
 ----------------
@@ -90,12 +92,19 @@ local ruler =  " %{% &ruler ? ( &rulerformat == '' ? '%3*%-14.(%l,%c%V%)%1* %P '
 
 local branch = "  %{ trim(system('[[ -d .git ]] && git branch --show-current'))} %*"
 
+------------
+-- Buffer --
+------------
+
+-- We use the same workaround that the mode indicator.
+local buffer = '%{% mode() == "c" ? "%9*" : "%2*" %}❲ bnr %n❳ %*'
+
 -- Example:
 
 
 local function make_status_line()
-	return string.format("%%{%% v:lua.require'status_line'.get_mode() %%}%s %s %s %%= %s❲ bnr %s❳  %s",
-		branch, file, flags, filetype, bufnr, ruler)
+	return string.format("%%{%% v:lua.require'status_line'.get_mode() %%}%s %s %s %%= %s %s %s",
+		branch, file, flags, filetype, buffer, ruler)
 end
 
 vim.o.statusline = make_status_line()
@@ -186,8 +195,8 @@ vim.api.nvim_create_autocmd({'ModeChanged'}, {
 		vim.cmd { cmd = 'highlight', args = { 'clear', 'User1' } }
 		vim.cmd { cmd = 'highlight', args = { 'clear', 'User2' } }
 
-		vim.cmd { cmd = 'highlight', args = { 'User1', 'guibg=' .. fg, 'guifg=black' }, bang = true }
-		vim.cmd { cmd = 'highlight', args = { 'User2', 'guibg=NONE', 'guifg=' .. fg }, bang = true }
+		vim.cmd { cmd = 'highlight', args = { 'User1', 'guibg=' .. fg, 'guifg=black', 'gui=italic' }, bang = true }
+		vim.cmd { cmd = 'highlight', args = { 'User2', 'guibg=NONE', 'guifg=' .. fg, 'gui=NONE' }, bang = true }
 
 		vim.cmd { cmd = 'redrawstatus', bang = true }
 	end
