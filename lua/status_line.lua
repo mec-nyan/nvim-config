@@ -119,22 +119,38 @@ end
 
 vim.o.statusline = make_status_line()
 
+-- TODO: Validation/error value.
+local function tohex(s)
+	return string.format("#%x", s)
+end
+
 vim.api.nvim_create_autocmd({'VimEnter', 'ColorScheme'}, {
 	callback = function()
 		vim.schedule(function()
-			-- TODO: Get the colours from the theme.
+			-- NOTE: Not portable across colorschemes.
+			-- TODO: Check for `link`s to other groups.
+			local func_hl = vim.api.nvim_get_hl(0, { name = 'Function' })
+			local comment_hl = vim.api.nvim_get_hl(0, { name = 'Comment' })
+
+			local fg = func_hl.fg and tohex(func_hl.fg) or 'slateblue'
+
 			-- User1: mode
-			vim.cmd.highlight { "User1", "guibg=slateblue", "guifg=white", "gui=italic" }
+			vim.cmd { cmd = 'highlight', args = { 'User1', 'guibg=' .. fg, 'guifg=black', 'gui=italic' } }
+
 			-- User2: branch
-			vim.cmd.highlight { "User2", "guibg=NONE", "guifg=slateblue", "gui=NONE" }
+			vim.cmd { cmd = 'highlight', args = { 'User2', 'guibg=NONE', 'guifg=' .. fg, 'gui=NONE' } }
+
 			-- User3: file
-			vim.cmd.highlight { "User3", "guibg=NONE", "guifg=grey40", "gui=NONE" }
-			vim.cmd.highlight { "User4", "guibg=yellowgreen", "guifg=black", "gui=NONE" }
-			vim.cmd.highlight { "User5", "guibg=green", "guifg=white", "gui=NONE" }
-			vim.cmd.highlight { "User6", "guibg=indianred", "guifg=white", "gui=NONE" }
-			vim.cmd.highlight { "User7", "guibg=none", "guifg=darkorange", "gui=NONE" }
-			vim.cmd.highlight { "User8", "guibg=none", "guifg=dodgerblue", "gui=bold" }
-			vim.cmd.highlight { "User9", "guibg=none", "guifg=grey40" }
+			fg = comment_hl.fg and tohex(comment_hl.fg) or 'grey40'
+			vim.cmd { cmd = 'highlight', args = { 'User3', 'guibg=NONE', 'guifg=' .. fg, 'gui=NONE' } }
+
+			-- Others (used for `ft`).
+			vim.cmd { cmd = 'highlight', args = { 'User4', 'guibg=yellowgreen', 'guifg=black', 'gui=NONE' } }
+			vim.cmd { cmd = 'highlight', args = { 'User5', 'guibg=green', 'guifg=white', 'gui=NONE' } }
+			vim.cmd { cmd = 'highlight', args = { 'User6', 'guibg=indianred', 'guifg=white', 'gui=NONE' } }
+			vim.cmd { cmd = 'highlight', args = { 'User7', 'guibg=NONE', 'guifg=darkorange', 'gui=NONE' } }
+			vim.cmd { cmd = 'highlight', args = { 'User8', 'guibg=NONE', 'guifg=dodgerblue', 'gui=NONE' } }
+			-- vim.cmd { cmd = 'highlight', args = { 'User9', 'guibg=NONE', 'guifg=', 'gui=NONE' } }
 		end)
 	end,
 })
