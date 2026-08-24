@@ -113,25 +113,31 @@ local branch = "%2*  %{ trim(system('[[ -d .git ]] && git branch --show-curre
 
 
 local function make_status_line()
-	-- TODO: Get the colours from the theme.
-	-- User1: mode
-	vim.cmd.highlight { "User1", "guibg=slateblue", "guifg=white", "gui=italic" }
-	-- User2: branch
-	vim.cmd.highlight { "User2", "guibg=NONE", "guifg=slateblue", "gui=NONE" }
-	-- User3: file
-	vim.cmd.highlight { "User3", "guibg=NONE", "guifg=grey40", "gui=NONE" }
-	vim.cmd.highlight { "User4", "guibg=yellowgreen", "guifg=black", "gui=NONE" }
-	vim.cmd.highlight { "User5", "guibg=green", "guifg=white", "gui=NONE" }
-	vim.cmd.highlight { "User6", "guibg=indianred", "guifg=white", "gui=NONE" }
-	vim.cmd.highlight { "User7", "guibg=none", "guifg=darkorange", "gui=NONE" }
-	vim.cmd.highlight { "User8", "guibg=none", "guifg=dodgerblue", "gui=bold" }
-	vim.cmd.highlight { "User9", "guibg=none", "guifg=grey40" }
-
 	return string.format("%%{%% v:lua.require'status_line'.get_mode() %%}%s %s %s %%= %s buf: %s - %s",
 		branch, file, flags, filetype, bufnr, ruler)
 end
 
 vim.o.statusline = make_status_line()
+
+vim.api.nvim_create_autocmd({'VimEnter', 'ColorScheme'}, {
+	callback = function()
+		vim.schedule(function()
+			-- TODO: Get the colours from the theme.
+			-- User1: mode
+			vim.cmd.highlight { "User1", "guibg=slateblue", "guifg=white", "gui=italic" }
+			-- User2: branch
+			vim.cmd.highlight { "User2", "guibg=NONE", "guifg=slateblue", "gui=NONE" }
+			-- User3: file
+			vim.cmd.highlight { "User3", "guibg=NONE", "guifg=grey40", "gui=NONE" }
+			vim.cmd.highlight { "User4", "guibg=yellowgreen", "guifg=black", "gui=NONE" }
+			vim.cmd.highlight { "User5", "guibg=green", "guifg=white", "gui=NONE" }
+			vim.cmd.highlight { "User6", "guibg=indianred", "guifg=white", "gui=NONE" }
+			vim.cmd.highlight { "User7", "guibg=none", "guifg=darkorange", "gui=NONE" }
+			vim.cmd.highlight { "User8", "guibg=none", "guifg=dodgerblue", "gui=bold" }
+			vim.cmd.highlight { "User9", "guibg=none", "guifg=grey40" }
+		end)
+	end,
+})
 
 return {
 	get_mode = function()
