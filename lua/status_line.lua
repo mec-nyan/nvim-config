@@ -18,28 +18,7 @@ local default_sl = "%<%f %h%w%m%r %{% v:lua.require('vim._core.util').term_exitc
 -- Mode indicator --
 --------------------
 
---[[
-local nvim_modes = {
-	n = '%1* nor ',
-	i = '%2* ins ',
-	v = '%3* vis ',
-	V = '%3* vis ',
-	t = '%4* ter ',
-	c = '%5* com ',
-	R = '%6* rep ',
-	r = '%6* >_  ',
-	rm = '%6* more ',
-}
-
-local mode = "%{% luaeval('_A[vim.api.nvim_get_mode().mode]', { "
-
-for k, v in pairs(nvim_modes) do
-	mode = mode .. string.format("'%s': '%s', ", k, v)
-end
-
-mode = mode .." } ) %}"
-
---]]
+-- See module's `get_mode`.
 
 ----------
 -- File --
@@ -47,7 +26,9 @@ mode = mode .." } ) %}"
 
 local file = '%<📃 %3*%f%*'
 
--- local flags = '%h%w%m%r'
+-----------
+-- Flags --
+-----------
 
 local is_help = "%{% luaeval('vim.bo.filetype == \"help\" and \"📜 \" or \"\"')%}"
 local ro = "%{% luaeval('vim.bo.modifiable and \"\" or \"🔒 \"') %}"
@@ -101,7 +82,7 @@ local showcmd = '%S'
 -- Ruler --
 -----------
 
-local ruler =  " %{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %}"
+local ruler =  " %{% &ruler ? ( &rulerformat == '' ? '%3*%-14.(%l,%c%V%)%1* %P ' : &rulerformat ) : '' %}"
 
 ----------------
 -- Git branch --
@@ -113,7 +94,7 @@ local branch = "  %{ trim(system('[[ -d .git ]] && git branch --show-current'
 
 
 local function make_status_line()
-	return string.format("%%{%% v:lua.require'status_line'.get_mode() %%}%s %s %s %%= %s buf: %s - %s",
+	return string.format("%%{%% v:lua.require'status_line'.get_mode() %%}%s %s %s %%= %s❲ bnr %s❳  %s",
 		branch, file, flags, filetype, bufnr, ruler)
 end
 
@@ -124,13 +105,17 @@ local function tohex(s)
 	return string.format("#%x", s)
 end
 
+local function get_hl(name)
+	return vim.api.nvim_get_hl(0, { name = name })
+end
+
 vim.api.nvim_create_autocmd({'VimEnter', 'ColorScheme'}, {
 	callback = function()
 		vim.schedule(function()
 			-- NOTE: Not portable across colorschemes.
 			-- TODO: Check for `link`s to other groups.
-			local func_hl = vim.api.nvim_get_hl(0, { name = 'Function' })
-			local comment_hl = vim.api.nvim_get_hl(0, { name = 'Comment' })
+			local func_hl = get_hl('Function')
+			local comment_hl = get_hl('Comment')
 
 			local fg = func_hl.fg and tohex(func_hl.fg) or 'slateblue'
 
@@ -151,7 +136,7 @@ vim.api.nvim_create_autocmd({'VimEnter', 'ColorScheme'}, {
 			vim.cmd { cmd = 'highlight', args = { 'User7', 'guibg=NONE', 'guifg=darkorange', 'gui=NONE' } }
 
 			-- Cmdline workaround.
-			local type_hl = vim.api.nvim_get_hl(0, { name = 'Type' })
+			local type_hl = get_hl('Type')
 			fg = type_hl.fg and tohex(type_hl.fg) or 'yellow'
 			vim.cmd { cmd = 'highlight', args = { 'User8', 'guibg=' .. fg, 'guifg=black', 'gui=italic' } }
 			vim.cmd { cmd = 'highlight', args = { 'User9', 'guibg=NONE', 'guifg=' .. fg, 'gui=NONE' } }
@@ -166,8 +151,6 @@ vim.api.nvim_create_autocmd({'ModeChanged'}, {
 		if #mode < 1 then return end
 
 		mode = mode:lower():sub(1, 1)
-
-		local get_hl = function(name) return vim.api.nvim_get_hl(0, { name = name }) end
 
 		local groups = {}
 
