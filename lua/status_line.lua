@@ -207,18 +207,18 @@ vim.api.nvim_create_autocmd({'ModeChanged'}, {
 
 return {
 	get_mode = function()
-		local mode = vim.api.nvim_get_mode().mode
+		local mode = vim.fn.mode()
+		if #mode < 1 then return '(?)' end
+
+		mode = mode:lower():sub(1, 1)
 
 		local modes = {
 			n = 'nor',
 			i = 'ins',
 			v = 'vis',
-			V = 'VIS',
 			t = 'tty',
 			c = 'com',
 			r = 'rep',
-			R = 'REP',
-			rm = 'more',
 		}
 
 		return string.format("%%1* %s %%*", modes[mode])
