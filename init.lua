@@ -74,3 +74,6 @@ require 'spell'
 
 -- Settings for (git) diff
 require 'diff'
+
+-- Help options
+require 'help'
