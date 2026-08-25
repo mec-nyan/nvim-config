@@ -84,8 +84,7 @@ local showcmd = '%S'
 -- Ruler --
 -----------
 
--- TODO: Implement the workaround for cmdline mode.
-local ruler =  " %{% &ruler ? ( &rulerformat == '' ? '%3*%-14.(%l,%c%V%)%1* %P ' : &rulerformat ) : '' %}"
+local ruler = '%3*%-14.(%l,%c%V%)%{% mode() == "c" ? "%8*" : "%1*" %} %P '
 
 ----------------
 -- Git branch --
