@@ -90,7 +90,7 @@ local ruler =  " %{% &ruler ? ( &rulerformat == '' ? '%3*%-14.(%l,%c%V%)%1* %P '
 -- Git branch --
 ----------------
 
-local branch = "  %{ trim(system('[[ -d .git ]] && git branch --show-current'))} %*"
+local branch = " 🌳 %{ trim(system('[[ -d .git ]] && git branch --show-current'))} %*"
 
 ------------
 -- Buffer --
