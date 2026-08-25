@@ -44,6 +44,7 @@ local flags = is_help .. "%w" .. modified .. ro
 -- default '&filetype' if not listed.
 local file_type_icons = {
 	[''] = '🩵💚',                 -- empty buffer i.e. start screen.
+	greetings = '🛸',
 	lua = '🌙',
 	python = '🐍',
 	c = '%7*⟨ C ⟩%*',

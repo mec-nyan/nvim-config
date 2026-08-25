@@ -20,19 +20,20 @@
 -- First try. Just put a string (with highlighting/colours) there.
 vim.o.shortmess = vim.o.shortmess .. 'I'
 
-local intro_message = {
-	"                    N e o v i m                ",
-	"______________________________________________ ",
-	"                                               ",
-	"If you're new to Nvim, type :help nvim<Enter>  ",
-	"To optimise Nvim, type      :checkhealth<Enter>",
-	"To quit, type               :q<Enter>          ",
-	"For help, type              :help<Enter>       ",
-	"                                               ",
-}
 
 
 local function show()
+	local intro_message = {
+		"                    N e o v i m                ",
+		"______________________________________________ ",
+		"                                               ",
+		"If you're new to Nvim, type :help nvim<Enter>  ",
+		"To optimise Nvim, type      :checkhealth<Enter>",
+		"To quit, type               :q<Enter>          ",
+		"For help, type              :help<Enter>       ",
+		"                                               ",
+	}
+
 	local win = vim.api.nvim_get_current_win()
 	local buf = vim.api.nvim_get_current_buf()
 
@@ -45,24 +46,26 @@ local function show()
 	local height = vim.api.nvim_win_get_height(win)
 	local width = vim.api.nvim_win_get_width(win)
 
-	-- Set buffer options.
-	-- TODO: Some user options will need to be restored!
-	local options = {
-		bufhidden = 'wipe',
-		buflisted = false,
-		list = false,
-		swapfile = false,
-		readonly = false,
-		filetype = '',  -- TODO: set a special filetype so we can apply exclusive settings.
-		number = false,
-		relativenumber = false,
-		colorcolumn = '',
-		cursorcolumn = false,
-		spell = false,
-	}
+	if vim.opt_local.filetype ~= 'greetings' then
+		-- Set buffer options.
+		-- TODO: Some user options will need to be restored!
+		local options = {
+			bufhidden = 'wipe',
+			buflisted = false,
+			list = false,
+			swapfile = false,
+			readonly = false,
+			filetype = 'greetings',
+			number = false,
+			relativenumber = false,
+			colorcolumn = '',
+			cursorcolumn = false,
+			spell = false,
+		}
 
-	for opt, val in pairs(options) do
-		vim.opt_local[opt] = val
+		for opt, val in pairs(options) do
+			vim.opt_local[opt] = val
+		end
 	end
 
 	local banner = {
@@ -140,4 +143,16 @@ local function show()
 end
 
 
-show()
+vim.api.nvim_create_autocmd({'VimEnter'}, {
+	callback = function()
+		show()
+	end,
+})
+
+vim.api.nvim_create_autocmd('VimResized', {
+	callback = function()
+		if vim.bo.filetype == 'greetings' then
+			show()
+		end
+	end,
+})
