@@ -71,3 +71,6 @@ require 'text_objects'
 
 -- Spelling suggestions pop-up
 require 'spell'
+
+-- Settings for (git) diff
+require 'diff'
