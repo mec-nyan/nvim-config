@@ -61,7 +61,20 @@ vim.api.nvim_create_autocmd('InsertCharPre', {
 -- Confirm with <enter>
 -- This needs to be improved for other uses of <enter> and <tab>.
 setkey('i', '<Enter>', function()
-	return vim.fn.pumvisible() == 1 and '<C-y>' or '<Enter>'
+	if vim.fn.pumvisible() == 1 then
+		return '<C-y>'
+	end
+
+	local col = vim.fn.col('.')
+	local line = vim.fn.getline('.')
+	local next = line:sub(col, col)
+
+	if next:match('[})%]]') then
+		-- TODO: Check if we can keep the right indent level all the time.
+		return '<Enter><C-o>k<C-o>$<C-o>o'
+	end
+
+	return '<Enter>'
 end, { expr = true, silent = true })
 
 
