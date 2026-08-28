@@ -9,7 +9,7 @@
 local setkey = vim.keymap.set
 local delkey = vim.keymap.del
 
-local delay = 14
+local delay = 1  -- This doesn't seem to have any effect other than bein' "non-zero"...
 
 local ctrl_e_j = vim.api.nvim_replace_termcodes('<C-e>j', false, false, true)
 local ctrl_y_k = vim.api.nvim_replace_termcodes('<C-y>k', false, false, true)
@@ -32,7 +32,8 @@ local function make_callback_next(timer, amount)
 
 		if start == amount or current == last then
 			timer:stop()
-			timer:close()
+			-- TODO: This is giving problems (timer is already closing... why?).
+			-- timer:close()
 			return
 		end
 
@@ -47,7 +48,8 @@ local function scroll_next()
 
 	timer:start(0, delay, vim.schedule_wrap(make_callback_next(timer, amount)))
 
-	return timer
+	-- Let the GC do its job ...
+	-- return timer
 end
 
 
@@ -65,7 +67,8 @@ local function make_callback_prev(timer, amount)
 
 		if start == amount or first == 1 then
 			timer:stop()
-			timer:close()
+			-- TODO: This is giving problems (timer is already closing... why?).
+			-- timer:close()
 			return
 		end
 
@@ -80,7 +83,8 @@ local function scroll_prev()
 
 	timer:start(0, delay, vim.schedule_wrap(make_callback_prev(timer, amount)))
 
-	return timer
+	-- Let the GC do its job ...
+	-- return timer
 end
 
 
@@ -98,7 +102,7 @@ local function make_callback_down(timer, amount)
 	return function()
 		if start == amount then
 			timer:stop()
-			timer:close()
+			timer:close() -- Should we remove this?
 		end
 		
 		vim.api.nvim_feedkeys(ctrl_e, 'n', false)
@@ -113,7 +117,7 @@ local function make_callback_up(timer, amount)
 	return function()
 		if start == amount then
 			timer:stop()
-			timer:close()
+			timer:close() -- Should we remove this?
 		end
 		
 		vim.api.nvim_feedkeys(ctrl_y, 'n', false)
@@ -143,7 +147,8 @@ local function cursor_line_to_centre()
 		timer:start(0, delay, vim.schedule_wrap(make_callback_up(timer, centre - pos)))
 	end
 
-	return timer
+	-- Let the GC do its job ...
+	-- return timer
 end
 
 ---------
@@ -161,7 +166,8 @@ local function cursor_line_to_top()
 	local timer = vim.uv.new_timer()
 	timer:start(0, delay, vim.schedule_wrap(make_callback_down(timer, amount)))
 
-	return timer
+	-- Let the GC do its job ...
+	-- return timer
 end
 
 ------------
@@ -177,7 +183,8 @@ local function cursor_line_to_bottom()
 	local timer = vim.uv.new_timer()
 	timer:start(0, delay, vim.schedule_wrap(make_callback_up(timer, amount)))
 	
-	return timer
+	-- Let the GC do its job ...
+	-- return timer
 end
 
 ------------------
