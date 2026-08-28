@@ -7,6 +7,7 @@
 
 
 local setkey = vim.keymap.set
+local delkey = vim.keymap.del
 
 local delay = 14
 
@@ -189,3 +190,34 @@ setkey('n', '<C-u>', scroll_prev, { desc = '[scroll] page up' })
 setkey('n', 'zt', cursor_line_to_top, { desc = '[scroll] cursor line to top' })
 setkey('n', 'zz', cursor_line_to_centre, { desc = '[scroll] cursor line to centre' })
 setkey('n', 'zb', cursor_line_to_bottom, { desc = '[scroll] cursor line to bottom' })
+
+
+vim.g.smooth_scroll = 1
+
+vim.api.nvim_create_user_command('SmoothScrollEnable', function()
+	if not vim.g.smooth_scroll then
+		setkey('n', '<C-d>', scroll_next, { desc = '[scroll] page down' })
+		setkey('n', '<C-u>', scroll_prev, { desc = '[scroll] page up' })
+		setkey('n', 'zt', cursor_line_to_top, { desc = '[scroll] cursor line to top' })
+		setkey('n', 'zz', cursor_line_to_centre, { desc = '[scroll] cursor line to centre' })
+		setkey('n', 'zb', cursor_line_to_bottom, { desc = '[scroll] cursor line to bottom' })
+
+		vim.g.smooth_scroll = 1
+	end
+end, {
+	desc = '[scroll] enable smooth scrolling'
+})
+
+vim.api.nvim_create_user_command('SmoothScrollDisable', function()
+	if vim.g.smooth_scroll == 1 then
+		delkey('n', '<C-d>')
+		delkey('n', '<C-u>')
+		delkey('n', 'zt')
+		delkey('n', 'zz')
+		delkey('n', 'zb')
+
+		vim.g.smooth_scroll = nil
+	end
+end, {
+	desc = '[scroll] disable smooth scrolling'
+})
