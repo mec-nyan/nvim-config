@@ -155,10 +155,11 @@ vim.api.nvim_create_autocmd('VimEnter', {
 			end,
 		})
 
-		vim.api.nvim_create_autocmd('WinLeave', {
-			buf = 0,
-			command = 'only',
-		})
+		-- TODO: It's messing up completion...
+		-- vim.api.nvim_create_autocmd('WinLeave', {
+		-- 	buf = 0,
+		-- 	command = 'only',
+		-- })
 	end,
 	group = id,
 	once = true,
