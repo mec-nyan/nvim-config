@@ -142,17 +142,25 @@ local function show()
 	vim.opt_local.fillchars = 'eob: '
 end
 
+local id = vim.api.nvim_create_augroup('greetings', {})
 
-vim.api.nvim_create_autocmd({'VimEnter'}, {
+vim.api.nvim_create_autocmd('VimEnter', {
 	callback = function()
 		show()
+
+		vim.api.nvim_create_autocmd('VimResized', {
+			buf = 0,
+			callback = function()
+				show()
+			end,
+		})
+
+		vim.api.nvim_create_autocmd('WinLeave', {
+			buf = 0,
+			command = 'only',
+		})
 	end,
+	group = id,
+	once = true,
 })
 
-vim.api.nvim_create_autocmd('VimResized', {
-	callback = function()
-		if vim.bo.filetype == 'greetings' then
-			show()
-		end
-	end,
-})
