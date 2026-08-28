@@ -30,7 +30,38 @@ vim.cmd[[
 local setkey = vim.keymap.set
 
 setkey('i', '<Tab>', function()
-	return vim.fn.pumvisible() == 1 and '<C-n>' or '<Tab>'
+	if vim.fn.pumvisible() == 1 then
+		return '<C-n>'
+	end
+
+	if #vim.g.pairs_stack > 0 then
+		local _pairs = {
+			['('] = ')',
+			['['] = ']',
+			['{'] = '}',
+			['"'] = '"',
+			["'"] = "'",
+			['`'] = '`',
+		}
+
+		local stack = vim.g.pairs_stack
+		local next_pair = _pairs[stack[#stack]]
+
+		stack[#stack] = nil
+		vim.g.pairs_stack = stack
+
+		local col = vim.fn.col('.')
+		local next = vim.fn.getline('.'):sub(col, col)
+
+		if next ~= nil and next == next_pair then
+			return '<right>'
+		end
+
+		return '<C-o>/' .. next_pair .. '<cr><right>'
+
+	end
+
+	return '<Tab>'
 end, { expr = true })
 
 setkey('i', '<S-Tab>', function()
