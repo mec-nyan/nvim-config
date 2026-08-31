@@ -21,7 +21,7 @@ end
 
 local function config_clangd()
 	vim.lsp.config['clangd'] = {
-		cmd = { 'clangd' },
+		cmd = { 'clangd', '--enable-config' },
 		filetypes = { 'c', 'cpp' },
 		root_markers = { { '.clangd', '.clang-format' }, '.git' },
 		single_file_support = true,
@@ -47,6 +47,16 @@ local function config_rust_analyzer()
 		filetypes = { 'rust' },
 		root_markers = { 'Cargo.toml', '.git' },
 		single_file_support = true,
+		settings = {
+			inlayHints = {
+				enable = true,
+				maxLength = 25,
+				parameterHints = true,
+				smallerHints = true,
+				typeHints = true,
+				chainingHints = true,
+			}
+		},
 	}
 
 	vim.lsp.enable 'rust-analyzer'
