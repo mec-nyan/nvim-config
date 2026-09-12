@@ -9,7 +9,7 @@
 local setkey = vim.keymap.set
 local delkey = vim.keymap.del
 
-local delay = 1  -- This doesn't seem to have any effect other than bein' "non-zero"...
+local delay = 10  -- This doesn't seem to have any effect other than bein' "non-zero"...
 
 local ctrl_e_j = vim.api.nvim_replace_termcodes('<C-e>j', false, false, true)
 local ctrl_y_k = vim.api.nvim_replace_termcodes('<C-y>k', false, false, true)
