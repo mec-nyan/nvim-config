@@ -146,6 +146,14 @@ local function set_lsp_keymappings()
 			action = buf.document_symbol,
 			description = '[lsp] symbols',
 		},
+		{
+			mode = 'n',
+			mapping = '<leader>ih',
+			action = function()
+				vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+			end,
+			description = '[lsp] toggle inlay hints',
+		}
 	}
 
 	for _, mapping in ipairs(goto_mappings) do
