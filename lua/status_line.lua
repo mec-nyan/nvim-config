@@ -31,11 +31,25 @@ local file = '%<📃 %3*%f%*'
 -- Flags --
 -----------
 
-local is_help = "%{% luaeval('vim.bo.filetype == \"help\" and \"📜 \" or \"\"')%}"
-local ro = "%{% luaeval('vim.bo.modifiable and \"\" or \"🔒 \"') %}"
-local modified = "%{% luaeval('vim.bo.modified and \"🗡️ \" or \"\"') %}"
+function M.flags()
+	local parts = {}
 
-local flags = is_help .. "%w" .. modified .. ro
+	if vim.bo.filetype == 'help' then
+		table.insert(parts, '📜 ')
+	end
+
+	if vim.bo.modified then
+		table.insert(parts, '🗡️ ')
+	end
+
+	if not vim.bo.modifiable then
+		table.insert(parts, '🔒 ')
+	end
+
+	return table.concat(parts)
+end
+
+local flags = "%{v:lua.require'status_line'.flags()}" .. '%w'
 
 --------------------------------------
 -- Nice icons/emojis for filetypes! --
