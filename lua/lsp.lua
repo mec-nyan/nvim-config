@@ -21,6 +21,7 @@ end
 
 local function config_clangd()
 	vim.lsp.config['clangd'] = {
+		-- cmd = { 'clangd', '--enable-config', '--experimental-modules-support', '--log=verbose' },
 		cmd = { 'clangd', '--enable-config' },
 		filetypes = { 'c', 'cpp' },
 		root_markers = { { '.clangd', '.clang-format' }, '.git' },
@@ -125,7 +126,7 @@ local function set_lsp_keymappings()
 			mode = 'n',
 			mapping = '<leader>gn',
 			action = buf.rename,
-			description = '[lsp] renmae',
+			description = '[lsp] rename',
 		},
 		{
 			mode = 'n',
