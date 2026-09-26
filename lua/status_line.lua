@@ -4,6 +4,7 @@
 --
 --]]
 
+local M = {}
 
 -------------------------------------
 -- This is the default statusline. --
@@ -90,8 +91,44 @@ local ruler = '%3*%-14.(%l,%c%V%)%{% mode() == "c" ? "%8*" : "%1*" %} %P '
 -- Git branch --
 ----------------
 
-local branch = " 🌳 %{ trim(system('[[ -d .git ]] && git branch --show-current'))} %*"
+local branch_name = ''
 
+local function update_branch()
+	local output = vim.fn.system {
+		'git',
+		'-C',
+		vim.fn.getcwd(),
+		'branch',
+		'--show-current',
+	}
+
+	if vim.v.shell_error == 0 then
+		branch_name = vim.trim(output)
+	else
+		branch_name = ''
+	end
+
+	vim.cmd.redrawstatus()
+end
+
+function M.get_branch()
+	if branch_name == '' then
+		return ''
+	end
+
+	return ' 🌳 ' .. branch_name .. ' '
+end
+
+vim.api.nvim_create_autocmd({
+	'VimEnter',
+	'BufEnter',
+	'DirChanged',
+	'FocusGained',
+}, {
+	callback = update_branch,
+})
+
+local branch = "%{v:lua.require'status_line'.get_branch()}%*"
 ------------
 -- Buffer --
 ------------
@@ -202,26 +239,27 @@ vim.api.nvim_create_autocmd({'ModeChanged'}, {
 	end
 })
 
-return {
-	get_mode = function()
-		local mode = vim.fn.mode()
-		if #mode < 1 then return '(?)' end
+function M.get_mode()
+	local mode = vim.fn.mode()
+	if #mode < 1 then return '(?)' end
 
-		mode = mode:lower():sub(1, 1)
+	mode = mode:lower():sub(1, 1)
 
-		local modes = {
-			n = 'nor',
-			i = 'ins',
-			v = 'vis',
-			t = 'tty',
-			c = 'com',
-			r = 'rep',
-		}
+	local modes = {
+		n = 'nor',
+		i = 'ins',
+		v = 'vis',
+		t = 'tty',
+		c = 'com',
+		r = 'rep',
+	}
 
-		-- Workaround: statusline doesn't update on `cmdline` mode.
-		local user1 = mode == 'c' and 8 or 1
-		local user2 = mode == 'c' and 9 or 2
+	-- Workaround: statusline doesn't update on `cmdline` mode.
+	local user1 = mode == 'c' and 8 or 1
+	local user2 = mode == 'c' and 9 or 2
 
-		return string.format("%%%d* %s %%*%%%d*", user1, modes[mode], user2)
-	end,
-}
+	return string.format("%%%d* %s %%*%%%d*", user1, modes[mode], user2)
+end
+
+return M
+
