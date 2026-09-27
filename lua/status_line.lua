@@ -164,44 +164,6 @@ local function get_hl(name)
 	return vim.api.nvim_get_hl(0, { name = name })
 end
 
----[[
-vim.api.nvim_create_autocmd({'VimEnter', 'ColorScheme'}, {
-	callback = function()
-		vim.schedule(function()
-			-- NOTE: Not portable across colorschemes.
-			-- TODO: Check for `link`s to other groups.
-			local func_hl = get_hl('Function')
-			local comment_hl = get_hl('Comment')
-
-			local fg = func_hl.fg and tohex(func_hl.fg) or 'slateblue'
-
-			-- User1: mode
-			vim.cmd { cmd = 'highlight', args = { 'User1', 'guibg=' .. fg, 'guifg=black', 'gui=italic' } }
-
-			-- User2: branch
-			vim.cmd { cmd = 'highlight', args = { 'User2', 'guibg=NONE', 'guifg=' .. fg, 'gui=NONE' } }
-
-			-- User3: file
-			fg = comment_hl.fg and tohex(comment_hl.fg) or 'grey40'
-			vim.cmd { cmd = 'highlight', args = { 'User3', 'guibg=NONE', 'guifg=' .. fg, 'gui=NONE' } }
-
-			-- Others (used for `ft`).
-			vim.cmd { cmd = 'highlight', args = { 'User4', 'guibg=yellowgreen', 'guifg=black', 'gui=NONE' } }
-			vim.cmd { cmd = 'highlight', args = { 'User5', 'guibg=green', 'guifg=white', 'gui=NONE' } }
-			vim.cmd { cmd = 'highlight', args = { 'User6', 'guibg=indianred', 'guifg=white', 'gui=NONE' } }
-			vim.cmd { cmd = 'highlight', args = { 'User7', 'guibg=NONE', 'guifg=darkorange', 'gui=NONE' } }
-
-			-- Cmdline workaround.
-			local type_hl = get_hl('Type')
-			fg = type_hl.fg and tohex(type_hl.fg) or 'yellow'
-			vim.cmd { cmd = 'highlight', args = { 'User8', 'guibg=' .. fg, 'guifg=black', 'gui=italic' } }
-			vim.cmd { cmd = 'highlight', args = { 'User9', 'guibg=NONE', 'guifg=' .. fg, 'gui=NONE' } }
-		end)
-	end,
-})
---]]
-
-
 local last_mode_colour
 
 local function set_mode_colour(mode)
@@ -235,6 +197,42 @@ local function set_mode_colour(mode)
 
 	vim.cmd.redrawstatus()
 end
+
+-- Initialise status line colours.
+vim.api.nvim_create_autocmd({'VimEnter', 'ColorScheme'}, {
+	--
+	callback = function()
+		vim.schedule(function()
+			-- NOTE: Not portable across colorschemes.
+			-- TODO: Check for `link`s to other groups.
+			set_mode_colour(vim.fn.mode():lower():sub(1, 1))
+
+			-- User3: file
+			local comment_hl = get_hl('Comment')
+			fg = comment_hl.fg and tohex(comment_hl.fg) or 'grey40'
+
+			vim.api.nvim_set_hl(0, 'User3', {
+				fg = fg,
+				bg = 'NONE',
+			})
+
+			-- TODO: Refactor using nvim_set_hl as the previous examples...
+
+			-- Others (used for `ft`).
+			vim.cmd { cmd = 'highlight', args = { 'User4', 'guibg=yellowgreen', 'guifg=black', 'gui=NONE' } }
+			vim.cmd { cmd = 'highlight', args = { 'User5', 'guibg=green', 'guifg=white', 'gui=NONE' } }
+			vim.cmd { cmd = 'highlight', args = { 'User6', 'guibg=indianred', 'guifg=white', 'gui=NONE' } }
+			vim.cmd { cmd = 'highlight', args = { 'User7', 'guibg=NONE', 'guifg=darkorange', 'gui=NONE' } }
+
+			-- Cmdline workaround.
+			local type_hl = get_hl('Type')
+			fg = type_hl.fg and tohex(type_hl.fg) or 'yellow'
+			vim.cmd { cmd = 'highlight', args = { 'User8', 'guibg=' .. fg, 'guifg=black', 'gui=italic' } }
+			vim.cmd { cmd = 'highlight', args = { 'User9', 'guibg=NONE', 'guifg=' .. fg, 'gui=NONE' } }
+		end)
+	end,
+})
+
 
 vim.api.nvim_create_autocmd({'ModeChanged'}, {
 	pattern = { '*:n*', '*:v*', '*:V*', '*:CTRL-V*', '*:s*', '*:S*', '*:i*', '*:R*', '*:r*', '*:t*' },
