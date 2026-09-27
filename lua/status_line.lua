@@ -158,6 +158,7 @@ local function make_status_line()
 		branch, file, flags, filetype, buffer, ruler)
 end
 
+
 vim.o.statusline = make_status_line()
 
 -- TODO: Validation/error value.
@@ -169,6 +170,7 @@ local function get_hl(name)
 	return vim.api.nvim_get_hl(0, { name = name })
 end
 
+---[[
 vim.api.nvim_create_autocmd({'VimEnter', 'ColorScheme'}, {
 	callback = function()
 		vim.schedule(function()
@@ -203,54 +205,49 @@ vim.api.nvim_create_autocmd({'VimEnter', 'ColorScheme'}, {
 		end)
 	end,
 })
+--]]
+
+
+local last_mode_colour
+
+local function set_mode_colour(mode)
+	local colours = {
+		i = { 'OkMsg', '9acd32' },        -- Yellow green.
+		n = { 'Function', 'ff69b4' },     -- Hot pink.
+		v = { 'Keyword', '7b68ee' },      -- Medium slate blue.
+		t = { 'String', '7cfc00' },       -- Lime green.
+		r = { 'ErrorMsg', 'cd5c5c' },     -- Indian red.
+		c = { 'Type', 'ffff00' },         -- Yellow.
+	}
+
+	local group = colours[mode] or colours.r
+	local hl = get_hl(group[1])
+	local fg = hl.fg and tohex(hl.fg) or group[2]
+
+	if fg == last_mode_colour then return end
+
+	last_mode_colour = fg
+
+	vim.api.nvim_set_hl(0, 'User1', {
+		fg = 'black',
+		bg = fg,
+		italic = true,
+	})
+
+	vim.api.nvim_set_hl(0, 'User2', {
+		fg = fg,
+		bg = 'NONE',
+	})
+
+	vim.cmd.redrawstatus()
+end
 
 vim.api.nvim_create_autocmd({'ModeChanged'}, {
 	pattern = { '*:n*', '*:v*', '*:V*', '*:CTRL-V*', '*:s*', '*:S*', '*:i*', '*:R*', '*:r*', '*:t*' },
 	callback = function()
-		local mode = vim.fn.mode()
-		if #mode < 1 then return end
-
-		mode = mode:lower():sub(1, 1)
-
-		local groups = {}
-
-		for k, v in pairs {
-			kwd = { name = 'Keyword', default = '7b68ee' },      -- Medium slate blue.
-			fun = { name = 'Function', default = 'ff69b4' },     -- Hot pink.
-			str = { name = 'String', default = '7cfc00' },       -- Lime green.
-			err = { name = 'ErrorMsg', default = 'cd5c5c' },     -- Indian red.
-			type = { name = 'Type', default = 'ffff00' },        -- Yellow.
-			ok = { name = 'OkMsg', default = '9acd32' },         -- Yellow green.
-		} do
-			groups[k] = get_hl(v.name).fg or v.default
-		end
-
-		local fg
-
-		if mode == 'i' then
-			fg = tohex(groups.ok)
-		elseif mode == 'v' then
-			fg = tohex(groups.kwd)
-		elseif mode == 't' then
-			fg = tohex(groups.str)
-		elseif mode == 'c' then
-			fg = tohex(groups.type)
-		elseif mode == 'r' then
-			fg = tohex(groups.err)
-		elseif mode == 'n' then
-			fg = tohex(groups.fun)
-		else
-			fg = tohex(groups.err)
-		end
-
-		vim.cmd { cmd = 'highlight', args = { 'clear', 'User1' } }
-		vim.cmd { cmd = 'highlight', args = { 'clear', 'User2' } }
-
-		vim.cmd { cmd = 'highlight', args = { 'User1', 'guibg=' .. fg, 'guifg=black', 'gui=italic' }, bang = true }
-		vim.cmd { cmd = 'highlight', args = { 'User2', 'guibg=NONE', 'guifg=' .. fg, 'gui=NONE' }, bang = true }
-
-		vim.cmd { cmd = 'redrawstatus', bang = true }
-	end
+		local mode = vim.fn.mode():lower():sub(1, 1)
+		set_mode_colour(mode)
+	end,
 })
 
 function M.get_mode()
