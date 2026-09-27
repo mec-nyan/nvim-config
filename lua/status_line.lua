@@ -150,16 +150,10 @@ local branch = "%{v:lua.require'status_line'.get_branch()}%*"
 -- We use the same workaround that the mode indicator.
 local buffer = '%{% mode() == "c" ? "%9*" : "%2*" %}❲ bnr %n❳ %*'
 
--- Example:
 
-
-local function make_status_line()
-	return string.format("%%{%% v:lua.require'status_line'.get_mode() %%}%s %s %s %%= %s %s %s",
-		branch, file, flags, filetype, buffer, ruler)
-end
-
-
-vim.o.statusline = make_status_line()
+------------------
+-- Mode colours --
+------------------
 
 -- TODO: Validation/error value.
 local function tohex(s)
@@ -271,6 +265,16 @@ function M.get_mode()
 
 	return string.format("%%%d* %s %%*%%%d*", user1, modes[mode], user2)
 end
+
+
+-- Example:
+
+local function make_status_line()
+	return string.format("%%{%% v:lua.require'status_line'.get_mode() %%}%s %s %s %%= %s %s %s",
+		branch, file, flags, filetype, buffer, ruler)
+end
+
+vim.o.statusline = make_status_line()
 
 return M
 
