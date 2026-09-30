@@ -34,10 +34,12 @@ local severity = vim.diagnostic.severity
 local error, warning, info, hint = severity.ERROR, severity.WARN, severity.INFO, severity.HINT
 
 vim.diagnostic.config {
-	text = {
-		[error] = '🐛',
-		[warning] = '⚠️',
-		[info] = '📜',
-		[hint] = '💡',
-	},
+	signs = {
+		text = {
+			[error] = '🐛',
+			[warning] = '⚠️',
+			[info] = '📜',
+			[hint] = '💡',
+		},
+	}
 }

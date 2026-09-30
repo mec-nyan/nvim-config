@@ -18,7 +18,7 @@ setkey('i', '<M-q>', '<esc><cmd>quit<cr>', { desc = '[i] quit' })
 setkey('n', '<M-o>', '<cmd>only<cr>', { desc = '[n] only' })
 
 -- Movement
-setkey('n', 'ge', 'G', { desc = '[move] end of file' })
+setkey({'n', 'v'}, 'ge', 'G', { desc = '[move] end of file' })
 
 -- Search
 setkey('n', '<leader>l', '<cmd>nohlsearch<cr>', { desc = '[n] clear searh highlight' })
