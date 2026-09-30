@@ -69,19 +69,26 @@ end
 
 -- Use a darker background for other windows i.e. quickfix, preview, etc.
 
+vim.api.nvim_set_hl(0, '_alt_normal', {
+	-- TODO: Review the fallback colour selection.
+	fg = normal_hl.fg or 'white',
+	bg = normal_hl.bg or 'black',
+})
+
 -- Preview is a special window:
 vim.api.nvim_create_autocmd('WinEnter', {
 	callback = function()
 		if vim.wo.previewwindow then
-			vim.wo.winhighlight = 'Normal:Pmenu'
+			vim.wo.winhighlight = 'Normal:_alt_normal'
 		end
 	end
 })
 
 -- Both loclist and qflist have the same filetype `qf`.
 vim.api.nvim_create_autocmd('FileType', {
-	pattern = { 'qf' },
+	pattern = { 'qf', 'help' },
 	callback = function()
-		vim.wo.winhighlight = 'Normal:Pmenu'
+		vim.wo.colorcolumn = ''
+		vim.wo.winhighlight = 'Normal:_alt_normal'
 	end
 })
