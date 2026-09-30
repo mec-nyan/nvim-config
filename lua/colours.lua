@@ -33,6 +33,7 @@ local function_hl = get_hl('Function')
 local ok_msg_hl = get_hl('OkMsg')
 local keyword_hl = get_hl('Keyword')
 local cursor_line_hl = get_hl('CursorLine')
+local comment_hl = get_hl('Comment')
 
 local popup_groups = {
 	Pmenu = {
@@ -44,6 +45,10 @@ local popup_groups = {
 		bg = tohex(normal_hl.bg),
 		italic = true,
 	},
+	PmenuExtra = {
+		fg = tohex(comment_hl.fg),
+		bg = tohex(normal_hl.bg),
+	},
 	PmenuSel = {
 		fg = tohex(normal_hl.fg),
 		bg = tohex(cursor_line_hl.bg),
@@ -52,6 +57,10 @@ local popup_groups = {
 		fg = tohex(ok_msg_hl.fg),
 		bg = tohex(cursor_line_hl.bg),
 		italic = true,
+	},
+	PmenuExtraSel = {
+		fg = tohex(comment_hl.fg),
+		bg = tohex(cursor_line_hl.bg),
 	},
 	PmenuBorder = {
 		fg = tohex(function_hl.fg),

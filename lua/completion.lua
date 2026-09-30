@@ -57,25 +57,25 @@ setkey('i', '<S-Tab>', function()
 end, { expr = true })
 
 
-vim.api.nvim_create_autocmd('InsertCharPre', {
-	-- Start completion after two characters have been inserted.
-	-- Use only valid identifier's characters (don't trigger on {}()[] etc).
-	callback = function()
-		local col = vim.fn.col('.')
-		if col < 2 then return end
-
-		local line = vim.fn.getline('.')
-		if #line < 1 then return end
-
-		local current = vim.v.char
-		local previous = line:sub(col -1, col -1)
-
-		if current:match('^[_a-zA-Z0-9.]$') and
-			previous:match('^[_a-zA-Z0-9.]$') then
-			vim.lsp.completion.get()
-		end
-	end,
-})
+-- vim.api.nvim_create_autocmd('InsertCharPre', {
+-- 	-- Start completion after two characters have been inserted.
+-- 	-- Use only valid identifier's characters (don't trigger on {}()[] etc).
+-- 	callback = function()
+-- 		local col = vim.fn.col('.')
+-- 		if col < 2 then return end
+--
+-- 		local line = vim.fn.getline('.')
+-- 		if #line < 1 then return end
+--
+-- 		local current = vim.v.char
+-- 		local previous = line:sub(col -1, col -1)
+--
+-- 		if current:match('^[_a-zA-Z0-9.]$') and
+-- 			previous:match('^[_a-zA-Z0-9.]$') then
+-- 			vim.lsp.completion.get()
+-- 		end
+-- 	end,
+-- })
 
 -- Confirm with <enter>
 -- This needs to be improved for other uses of <enter> and <tab>.
