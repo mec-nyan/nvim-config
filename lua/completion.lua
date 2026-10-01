@@ -13,7 +13,7 @@
 
 require 'lsp'.setup()
 
-vim.o.completeopt = 'fuzzy,menuone,popup,noselect'
+vim.o.completeopt = 'fuzzy,menuone,preview,noselect'
 
 local setkey = vim.keymap.set
 
