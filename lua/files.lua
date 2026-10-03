@@ -36,6 +36,17 @@ setkey('n', '<leader>s', source_me, {
 	desc = '[TEST] Source current file.',
 })
 
+local function process(text)
+	if #text ~= 1 then
+		return { '...' }
+	end
+
+	local line = text[1]
+	return  {
+		line:upper(),
+	}
+end
+
 
 -----------
 -- Files --
@@ -141,6 +152,16 @@ local function file_picker()
 		vim.cmd 'stopinsert'
 	end, {
 		buf = insert_buf,
+	})
+
+	vim.api.nvim_create_autocmd('CursorMovedI', {
+		buf = insert_buf,
+		callback = function(ev)
+			local buf = ev.buf
+			local text = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+			text = process(text)
+			vim.api.nvim_buf_set_lines(top_left_buf, 0, -1, false, text)
+		end,
 	})
 end
 
