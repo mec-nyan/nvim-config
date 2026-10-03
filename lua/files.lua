@@ -70,7 +70,7 @@ local function file_picker()
 
 	-- Let's try one big window first.
 	local top_left_buf = vim.api.nvim_create_buf(false, true)
-	local top_left_win = vim.api.nvim_open_win(top_left_buf, true, {
+	local top_left_win = vim.api.nvim_open_win(top_left_buf, false, {
 		relative = 'editor',
 		row = top,
 		col = left,
@@ -79,12 +79,13 @@ local function file_picker()
 		style = 'minimal',
 		title = ' Files ',
 		title_pos = 'center',
+		focusable = false,
 	})
 
 	vim.wo.winhighlight = 'Normal:Normal,FloatBorder:Keyword'
 
 	local top_right_buf = vim.api.nvim_create_buf(false, true)
-	local top_right_win = vim.api.nvim_open_win(top_right_buf, true, {
+	local top_right_win = vim.api.nvim_open_win(top_right_buf, false, {
 		relative = 'editor',
 		row = top,
 		col = left + top_pane_left_width + 2,
@@ -93,6 +94,7 @@ local function file_picker()
 		style = 'minimal',
 		title = ' Preview ',
 		title_pos = 'center',
+		focusable = false,
 	})
 
 	vim.wo.winhighlight = 'Normal:Normal,FloatBorder:Keyword'
@@ -100,18 +102,46 @@ local function file_picker()
 	top = top + top_pane_height + 2
 
 	local prompt_buf = vim.api.nvim_create_buf(false, true)
-	local prompt_win = vim.api.nvim_open_win(prompt_buf, true, {
+	local prompt = ' 🔎 '
+	vim.api.nvim_buf_set_lines(prompt_buf, 0, -1, false, { prompt })
+
+	local prompt_win = vim.api.nvim_open_win(prompt_buf, false, {
 		relative = 'editor',
 		row = top,
 		col = left,
 		width = display_width - 2,
 		height = 1,
 		style = 'minimal',
+		focusable = false,
 	})
 
+	local insert_buf = vim.api.nvim_create_buf(false, true)
 
-	vim.wo.winhighlight = 'Normal:Normal,FloatBorder:Keyword'
+	local insert_win = vim.api.nvim_open_win(insert_buf, true, {
+		relative = 'win',
+		win = prompt_win,
+		row = 0,
+		col = 5,
+		width = display_width - 7,
+		height = 1,
+		style = 'minimal',
+		border = 'none',
+		focusable = true,
+	})
 
+	vim.wo.winhighlight = 'Normal:Normal'
+	vim.bo[insert_buf].autocomplete = false
+	vim.cmd 'startinsert'
+
+	setkey({'i', 'n'}, '<esc>', function()
+		vim.api.nvim_win_close(top_left_win, true)
+		vim.api.nvim_win_close(top_right_win, true)
+		vim.api.nvim_win_close(prompt_win, true)
+		vim.api.nvim_win_close(insert_win, true)
+		vim.cmd 'stopinsert'
+	end, {
+		buf = insert_buf,
+	})
 end
 
 -- TODO: Change key binding when it's working properly.
