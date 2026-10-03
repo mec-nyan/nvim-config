@@ -21,3 +21,17 @@
 --     - Bottom prompt window to type name/filter.
 --
 --]]
+
+local setkey = vim.keymap.set
+
+-- NOTE: This is for testing only.  Delete this function and its bindings
+-- once we're done.  (Or save it on `utils` or something like that.)
+
+local function source_me()
+	vim.cmd 'source %'
+	print(string.format('File "%s" reloaded ✨', vim.fn.expand('%:t')))
+end
+
+setkey('n', '<leader>s', source_me, {
+	desc = '[TEST] Source current file.',
+})
