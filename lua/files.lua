@@ -53,25 +53,62 @@ local function file_picker()
 	-- Let's use these sizes for now.
 	--
 	-- 4 spaces margin plus border.
-	display_width = available_width - (8 + 2)
+	display_width = available_width - 8
 	-- 2/3 accounting for border.
-	display_height = math.floor(available_height / 3) * 2 - 2
+	display_height = math.floor(available_height / 3) * 2
 
 	local top = math.floor((available_height - display_height) / 2)
 	local left = 4
 
+	local top_pane_height = display_height - 3
+	local top_pane_left_width = math.floor(display_width / 2)
+	local top_pane_right_width = display_width - top_pane_left_width
+
+	-- account for borders.
+	top_pane_left_width = top_pane_left_width - 2
+	top_pane_right_width = top_pane_right_width - 2
+
 	-- Let's try one big window first.
-	local buf = vim.api.nvim_create_buf(false, true)
-	local big_win = vim.api.nvim_open_win(buf, true, {
+	local top_left_buf = vim.api.nvim_create_buf(false, true)
+	local top_left_win = vim.api.nvim_open_win(top_left_buf, true, {
 		relative = 'editor',
 		row = top,
 		col = left,
-		width = display_width,
-		height = display_height,
+		width = top_pane_left_width,
+		height = top_pane_height,
 		style = 'minimal',
 		title = ' Files ',
 		title_pos = 'center',
 	})
+
+	vim.wo.winhighlight = 'Normal:Normal,FloatBorder:Keyword'
+
+	local top_right_buf = vim.api.nvim_create_buf(false, true)
+	local top_right_win = vim.api.nvim_open_win(top_right_buf, true, {
+		relative = 'editor',
+		row = top,
+		col = left + top_pane_left_width + 2,
+		width = top_pane_right_width,
+		height = top_pane_height,
+		style = 'minimal',
+		title = ' Preview ',
+		title_pos = 'center',
+	})
+
+	vim.wo.winhighlight = 'Normal:Normal,FloatBorder:Keyword'
+
+	top = top + top_pane_height + 2
+
+	local prompt_buf = vim.api.nvim_create_buf(false, true)
+	local prompt_win = vim.api.nvim_open_win(prompt_buf, true, {
+		relative = 'editor',
+		row = top,
+		col = left,
+		width = display_width - 2,
+		height = 1,
+		style = 'minimal',
+	})
+
 
 	vim.wo.winhighlight = 'Normal:Normal,FloatBorder:Keyword'
 
