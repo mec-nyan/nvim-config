@@ -36,15 +36,39 @@ setkey('n', '<leader>s', source_me, {
 	desc = '[TEST] Source current file.',
 })
 
+local function is_git()
+	local out = vim.system({ 'git', 'rev-parse', '--is-inside-work-tree' },
+		{ text = true, cwd = vim.fn.getcwd(0, 0) }):wait()
+
+	if out.stderr ~= '' then return false end
+
+	return true
+end
+
 local function process(text)
 	if #text ~= 1 then
-		return { '...' }
+		return { '🤪 ...' }
 	end
 
-	local line = text[1]
-	return  {
-		line:upper(),
-	}
+	-- Regular search (not `git`).
+	local ls_cmd = 'find . -type f -printf "%P\n"'
+
+	if is_git() then
+		ls_cmd = 'git ls-files --cached --others --exclude-standard'
+	end
+
+	if text[1] ~= '' then
+		ls_cmd = ls_cmd .. ' | fzf --filter=' .. text[1]
+	end
+
+	local out = vim.system({ 'bash', '-c', ls_cmd },
+		{ text = true, cwd = vim.fn.getcwd(0, 0) }):wait()
+
+	if out.stderr ~= '' then
+		return { '💩 ...' }
+	end
+
+	return vim.split(out.stdout, '\n')
 end
 
 
