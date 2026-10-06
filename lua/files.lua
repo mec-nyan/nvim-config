@@ -93,7 +93,14 @@ local function file_picker()
 		focusable = false,
 	})
 
-	vim.wo.winhighlight = 'Normal:Normal,FloatBorder:Keyword'
+	vim.api.nvim_set_option_value('winhighlight', 'Normal:Normal,FloatBorder:Keyword', {
+		scope = 'local', win = top_left_win,
+	})
+
+	-- Show cursor line so we can select with <Tab> (or <C-n> etc.).
+	vim.api.nvim_set_option_value('cursorline', true, {
+		scope = 'local', win = top_left_win,
+	})
 
 	local top_right_buf = vim.api.nvim_create_buf(false, true)
 	local top_right_win = vim.api.nvim_open_win(top_right_buf, false, {
@@ -108,7 +115,9 @@ local function file_picker()
 		focusable = false,
 	})
 
-	vim.wo.winhighlight = 'Normal:Normal,FloatBorder:Keyword'
+	vim.api.nvim_set_option_value('winhighlight', 'Normal:Normal,FloatBorder:Keyword', {
+		scope = 'local', win = top_right_win,
+	})
 
 	top = top + top_pane_height + 2
 
@@ -126,6 +135,10 @@ local function file_picker()
 		focusable = false,
 	})
 
+	vim.api.nvim_set_option_value('winhighlight', 'Normal:Normal,FloatBorder:String', {
+		scope = 'local', win = prompt_win,
+	})
+
 	local insert_buf = vim.api.nvim_create_buf(false, true)
 
 	local insert_win = vim.api.nvim_open_win(insert_buf, true, {
@@ -140,8 +153,14 @@ local function file_picker()
 		focusable = true,
 	})
 
-	vim.wo.winhighlight = 'Normal:Normal'
-	vim.bo[insert_buf].autocomplete = false
+	vim.api.nvim_set_option_value('winhighlight', 'Normal:Normal', {
+		scope = 'local', win = insert_win,
+	})
+
+	vim.api.nvim_set_option_value('autocomplete', false, {
+		scope = 'local', buf = insert_buf,
+	})
+
 	vim.cmd 'startinsert'
 
 	setkey({'i', 'n'}, '<esc>', function()
