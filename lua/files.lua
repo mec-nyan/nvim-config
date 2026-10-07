@@ -198,6 +198,22 @@ local function file_picker()
 		buf = insert_buf,
 	})
 
+	-- Preview function.
+	local function update_preview()
+		local pos = vim.api.nvim_win_get_cursor(top_left_win)
+		local line = vim.api.nvim_buf_get_lines(top_left_buf, pos[1] - 1, pos[1], false)
+
+		local preview = vim.system({ 'cat', line[1] }, { text = true }):wait()
+
+		local out = { 'Oops!' }
+
+		if preview.stderr == '' then
+			out = vim.split(preview.stdout, '\n')
+		end
+		
+		vim.api.nvim_buf_set_lines(top_right_buf, 0, -1, false, out)
+	end
+
 	-- Navigate files list.
 	local function prev()
 		local pos = vim.api.nvim_win_get_cursor(top_left_win)
@@ -205,6 +221,7 @@ local function file_picker()
 			pos[1] = pos[1] - 1
 		end
 		vim.api.nvim_win_set_cursor(top_left_win, pos)
+		update_preview()
 	end
 
 	local function next()
@@ -215,6 +232,7 @@ local function file_picker()
 			pos[1] = pos[1] + 1
 		end
 		vim.api.nvim_win_set_cursor(top_left_win, pos)
+		update_preview()
 	end
 
 	local list_bindings = {
@@ -245,6 +263,8 @@ local function file_picker()
 			vim.api.nvim_buf_set_lines(top_left_buf, 0, -1, false, text)
 			-- Move the cursor back to the first line/item.
 			vim.api.nvim_win_set_cursor(top_left_win, {1, 1})
+			-- Update the preview window.
+			update_preview()
 		end,
 	})
 end
