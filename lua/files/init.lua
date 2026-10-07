@@ -23,6 +23,7 @@
 --]]
 
 local file_utils = require 'files.utils'
+local dimensions = require 'files.dimensions'
 
 local setkey = vim.keymap.set
 
@@ -44,40 +45,22 @@ setkey('n', '<leader>s', source_me, {
 -----------
 
 local function file_picker()
-	local available_width = vim.o.columns
-	local available_height = vim.o.lines
 
-	-- We'll have three main windows/panes:
-	-- A list of files.
-	-- A preview of the currently selected file (if any).
-	-- A prompt window to enter our query/regex.
-	
-	-- Let's use these sizes for now.
-	--
-	-- 4 spaces margin plus border.
-	display_width = available_width - 8
-	-- 2/3 accounting for border.
-	display_height = math.floor(available_height / 3) * 2
+	local dims = dimensions.get_dimensions()
 
-	local top = math.floor((available_height - display_height) / 2)
-	local left = 4
-
-	local top_pane_height = display_height - 3
-	local top_pane_left_width = math.floor(display_width / 2)
-	local top_pane_right_width = display_width - top_pane_left_width
-
-	-- account for borders.
-	top_pane_left_width = top_pane_left_width - 2
-	top_pane_right_width = top_pane_right_width - 2
-
+	-------------------
+	-------------------
+	-- top left pane --
+	-------------------
+	-------------------
 	-- Let's try one big window first.
 	local top_left_buf = vim.api.nvim_create_buf(false, true)
 	local top_left_win = vim.api.nvim_open_win(top_left_buf, false, {
 		relative = 'editor',
-		row = top,
-		col = left,
-		width = top_pane_left_width,
-		height = top_pane_height,
+		row = dims.top,
+		col = dims.left,
+		width = dims.top_pane_left_width,
+		height = dims.top_pane_height,
 		style = 'minimal',
 		title = ' Files ',
 		title_pos = 'center',
@@ -93,13 +76,18 @@ local function file_picker()
 		scope = 'local', win = top_left_win,
 	})
 
+	--------------------
+	--------------------
+	-- top right pane --
+	--------------------
+	--------------------
 	local top_right_buf = vim.api.nvim_create_buf(false, true)
 	local top_right_win = vim.api.nvim_open_win(top_right_buf, false, {
 		relative = 'editor',
-		row = top,
-		col = left + top_pane_left_width + 2,
-		width = top_pane_right_width,
-		height = top_pane_height,
+		row = dims.top,
+		col = dims.left + dims.top_pane_left_width + 2,
+		width = dims.top_pane_right_width,
+		height = dims.top_pane_height,
 		style = 'minimal',
 		title = ' Preview ',
 		title_pos = 'center',
@@ -120,17 +108,22 @@ local function file_picker()
 		scope = 'local', win = top_right_win,
 	})
 
-	top = top + top_pane_height + 2
+	dims.top = dims.top + dims.top_pane_height + 2
 
+	------------
+	------------
+	-- prompt --
+	------------
+	------------
 	local prompt_buf = vim.api.nvim_create_buf(false, true)
 	local prompt = ' 🔎 '
 	vim.api.nvim_buf_set_lines(prompt_buf, 0, -1, false, { prompt })
 
 	local prompt_win = vim.api.nvim_open_win(prompt_buf, false, {
 		relative = 'editor',
-		row = top,
-		col = left,
-		width = display_width - 2,
+		row = dims.top,
+		col = dims.left,
+		width = dims.prompt_width - 2,
 		height = 1,
 		style = 'minimal',
 		focusable = false,
@@ -147,7 +140,7 @@ local function file_picker()
 		win = prompt_win,
 		row = 0,
 		col = 5,
-		width = display_width - 7,
+		width = dims.prompt_width - 7,
 		height = 1,
 		style = 'minimal',
 		border = 'none',
@@ -164,6 +157,11 @@ local function file_picker()
 
 	vim.cmd 'startinsert'
 
+	------------------
+	------------------
+	-- key bindings --
+	------------------
+	------------------
 	-- Quit.
 	setkey({'i', 'n'}, '<esc>', function()
 		vim.cmd 'stopinsert'
@@ -198,6 +196,11 @@ local function file_picker()
 		buf = insert_buf,
 	})
 
+	--------------------
+	--------------------
+	-- update preview --
+	--------------------
+	--------------------
 	-- Preview function.
 	local function update_preview()
 		local pos = vim.api.nvim_win_get_cursor(top_left_win)
@@ -238,6 +241,11 @@ local function file_picker()
 		})
 	end
 
+	-----------------------
+	-----------------------
+	-- more key bindings --
+	-----------------------
+	-----------------------
 	-- Navigate files list.
 	local function prev()
 		local pos = vim.api.nvim_win_get_cursor(top_left_win)
