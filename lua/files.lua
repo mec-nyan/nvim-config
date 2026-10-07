@@ -215,11 +215,34 @@ local function file_picker()
 
 	-- Quit.
 	setkey({'i', 'n'}, '<esc>', function()
+		vim.cmd 'stopinsert'
 		vim.api.nvim_win_close(top_left_win, true)
 		vim.api.nvim_win_close(top_right_win, true)
 		vim.api.nvim_win_close(prompt_win, true)
 		vim.api.nvim_win_close(insert_win, true)
+	end, {
+		buf = insert_buf,
+	})
+
+	-- Open.
+	setkey({'i', 'n'}, '<cr>', function()
 		vim.cmd 'stopinsert'
+
+		local pos = vim.api.nvim_win_get_cursor(top_left_win)
+		local line = vim.api.nvim_buf_get_lines(top_left_buf, pos[1] - 1, pos[1], false)
+
+		vim.api.nvim_win_close(top_left_win, true)
+		vim.api.nvim_win_close(top_right_win, true)
+		vim.api.nvim_win_close(prompt_win, true)
+		vim.api.nvim_win_close(insert_win, true)
+
+		if #line ~= 1 then return end
+
+		local filename = line[1]
+
+		-- Edit in current window.
+		-- TODO: Add key bindings to open in new tab or split.
+		vim.cmd('edit ' .. filename)
 	end, {
 		buf = insert_buf,
 	})
