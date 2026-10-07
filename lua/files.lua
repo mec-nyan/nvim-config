@@ -50,6 +50,8 @@ local function process(text)
 		return { '🤪 ...' }
 	end
 
+	-- TODO: Don't show binary (executable) files.
+
 	-- Regular search (not `git`).
 	local ls_cmd = 'find . -type f -printf "%P\n"'
 
@@ -143,6 +145,16 @@ local function file_picker()
 		scope = 'local', win = top_right_win,
 	})
 
+	-- Show line numbers on preview window.
+	vim.api.nvim_set_option_value('number', true, {
+		scope = 'local', win = top_right_win,
+	})
+
+	-- Don't wrap text on preview window.
+	vim.api.nvim_set_option_value('wrap', false, {
+		scope = 'local', win = top_right_win,
+	})
+
 	top = top + top_pane_height + 2
 
 	local prompt_buf = vim.api.nvim_create_buf(false, true)
@@ -203,7 +215,10 @@ local function file_picker()
 		local pos = vim.api.nvim_win_get_cursor(top_left_win)
 		local line = vim.api.nvim_buf_get_lines(top_left_buf, pos[1] - 1, pos[1], false)
 
-		local preview = vim.system({ 'cat', line[1] }, { text = true }):wait()
+		if #line ~= 1 then return end
+		local filename = line[1]
+
+		local preview = vim.system({ 'cat', filename }, { text = true }):wait()
 
 		local out = { 'Oops!' }
 
@@ -212,6 +227,20 @@ local function file_picker()
 		end
 		
 		vim.api.nvim_buf_set_lines(top_right_buf, 0, -1, false, out)
+
+		-- Syntax highlighting for the preview.
+		-- TODO: Set special cases where filetype cannot be deduced from file extension
+		-- (i.e. "Makefile", etc).
+		local extension = filename:match('%.(.*)') or 'text'
+
+		vim.api.nvim_win_call(top_right_win, function()
+			vim.cmd('set filetype=' .. extension)
+		end)
+
+		vim.api.nvim_win_set_config(top_right_win, {
+			footer = ' ' .. extension .. ' ',
+			footer_pos = 'right',
+		})
 	end
 
 	-- Navigate files list.
