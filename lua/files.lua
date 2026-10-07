@@ -187,6 +187,7 @@ local function file_picker()
 
 	vim.cmd 'startinsert'
 
+	-- Quit.
 	setkey({'i', 'n'}, '<esc>', function()
 		vim.api.nvim_win_close(top_left_win, true)
 		vim.api.nvim_win_close(top_right_win, true)
@@ -197,13 +198,53 @@ local function file_picker()
 		buf = insert_buf,
 	})
 
+	-- Navigate files list.
+	local function prev()
+		local pos = vim.api.nvim_win_get_cursor(top_left_win)
+		if pos[1] > 1 then
+			pos[1] = pos[1] - 1
+		end
+		vim.api.nvim_win_set_cursor(top_left_win, pos)
+	end
+
+	local function next()
+		local pos = vim.api.nvim_win_get_cursor(top_left_win)
+		local count = vim.api.nvim_buf_line_count(top_left_buf)
+		-- Account for the last '\n'.
+		if pos[1] < count - 1 then
+			pos[1] = pos[1] + 1
+		end
+		vim.api.nvim_win_set_cursor(top_left_win, pos)
+	end
+
+	local list_bindings = {
+		{
+			action = next,
+			keys = { '<Tab>', '<C-n>' },
+		},
+		{
+			action = prev,
+			keys = { '<S-Tab>', '<C-p>' },
+		},
+	}
+
+	for _, binding in pairs(list_bindings) do
+		for _, key in pairs(binding.keys) do
+			setkey({'i', 'n'}, key, binding.action, { buf = insert_buf })
+		end
+	end
+
 	vim.api.nvim_create_autocmd('CursorMovedI', {
 		buf = insert_buf,
-		callback = function(ev)
-			local buf = ev.buf
-			local text = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+		callback = function()
+			-- Get prompt, if any.
+			local text = vim.api.nvim_buf_get_lines(insert_buf, 0, -1, false)
+			-- Get the list of files, filtering by "prompt".
 			text = process(text)
+			-- Put the resulting list on the top left pane.
 			vim.api.nvim_buf_set_lines(top_left_buf, 0, -1, false, text)
+			-- Move the cursor back to the first line/item.
+			vim.api.nvim_win_set_cursor(top_left_win, {1, 1})
 		end,
 	})
 end
