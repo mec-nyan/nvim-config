@@ -45,6 +45,20 @@ local function is_git()
 	return true
 end
 
+local function is_executable(filename)
+	local out = vim.system({ 'file', filename }, { text = true, cwd = vim.fn.getcwd(0, 0)}):wait()
+
+	-- TODO: What should we do on error?
+	if out.stderr ~= '' then return false, 'error!' end
+
+	-- TODO: Better matching for non-readable files.
+	if out.stdout:match('executable') ~= nil then
+		return true, nil
+	end
+
+	return false, nil
+end
+
 local function process(text)
 	if #text ~= 1 then
 		return { '🤪 ...' }
@@ -218,11 +232,18 @@ local function file_picker()
 		if #line ~= 1 then return end
 		local filename = line[1]
 
-		local preview = vim.system({ 'cat', filename }, { text = true }):wait()
-
+		local preview = nil
 		local out = { 'Oops!' }
 
-		if preview.stderr == '' then
+		local is_exe, error = is_executable(filename)
+
+		if not is_exe then
+			preview = vim.system({ 'cat', filename }, { text = true }):wait()
+		else
+			out = { string.format('"%s" is an executable file.', filename) }
+		end
+
+		if preview ~= nil and preview.stderr == '' then
 			out = vim.split(preview.stdout, '\n')
 		end
 		

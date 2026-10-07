@@ -77,3 +77,6 @@ require 'diff'
 
 -- Help options
 require 'help'
+
+-- Files
+require 'files'
