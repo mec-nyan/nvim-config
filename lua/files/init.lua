@@ -22,6 +22,8 @@
 --
 --]]
 
+local file_utils = require 'files.utils'
+
 local setkey = vim.keymap.set
 
 -- NOTE: This is for testing only.  Delete this function and its bindings
@@ -35,57 +37,6 @@ end
 setkey('n', '<leader>s', source_me, {
 	desc = '[TEST] Source current file.',
 })
-
-local function is_git()
-	local out = vim.system({ 'git', 'rev-parse', '--is-inside-work-tree' },
-		{ text = true, cwd = vim.fn.getcwd(0, 0) }):wait()
-
-	if out.stderr ~= '' then return false end
-
-	return true
-end
-
-local function is_executable(filename)
-	local out = vim.system({ 'file', filename }, { text = true, cwd = vim.fn.getcwd(0, 0)}):wait()
-
-	-- TODO: What should we do on error?
-	if out.stderr ~= '' then return false, 'error!' end
-
-	-- TODO: Better matching for non-readable files.
-	if out.stdout:match('executable') ~= nil then
-		return true, nil
-	end
-
-	return false, nil
-end
-
-local function process(text)
-	if #text ~= 1 then
-		return { '🤪 ...' }
-	end
-
-	-- TODO: Don't show binary (executable) files.
-
-	-- Regular search (not `git`).
-	local ls_cmd = 'find . -type f -printf "%P\n"'
-
-	if is_git() then
-		ls_cmd = 'git ls-files --cached --others --exclude-standard'
-	end
-
-	if text[1] ~= '' then
-		ls_cmd = ls_cmd .. ' | fzf --filter=' .. text[1]
-	end
-
-	local out = vim.system({ 'bash', '-c', ls_cmd },
-		{ text = true, cwd = vim.fn.getcwd(0, 0) }):wait()
-
-	if out.stderr ~= '' then
-		return { '💩 ...' }
-	end
-
-	return vim.split(out.stdout, '\n')
-end
 
 
 -----------
@@ -258,7 +209,7 @@ local function file_picker()
 		local preview = nil
 		local out = { 'Oops!' }
 
-		local is_exe, error = is_executable(filename)
+		local is_exe, error = file_utils.is_executable(filename)
 
 		if not is_exe then
 			preview = vim.system({ 'cat', filename }, { text = true }):wait()
@@ -331,7 +282,7 @@ local function file_picker()
 			-- Get prompt, if any.
 			local text = vim.api.nvim_buf_get_lines(insert_buf, 0, -1, false)
 			-- Get the list of files, filtering by "prompt".
-			text = process(text)
+			text = file_utils.process(text)
 			-- Put the resulting list on the top left pane.
 			vim.api.nvim_buf_set_lines(top_left_buf, 0, -1, false, text)
 			-- Move the cursor back to the first line/item.
