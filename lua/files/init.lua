@@ -22,9 +22,8 @@
 --
 --]]
 
-local panes = require 'files.panes'
-local preview = require 'files.preview'
-local file_utils = require 'files.utils'
+local dimensions = require 'files.dimensions'
+local ui = require 'files.ui'
 
 local setkey = vim.keymap.set
 
@@ -47,109 +46,10 @@ setkey('n', '<leader>s', source_me, {
 
 local function file_picker()
 
-	local top_left_buf, top_left_win = panes.top_left_pane()
-	local top_right_buf, top_right_win = panes.top_right_pane()
-	local _, prompt_win, insert_buf, insert_win = panes.prompt_pane()
+	local geometry = dimensions.get_dimensions()
 
-	vim.cmd 'startinsert'
+	ui:open(geometry)
 
-	------------------
-	------------------
-	-- key bindings --
-	------------------
-	------------------
-	-- Quit.
-	setkey({'i', 'n'}, '<esc>', function()
-		vim.cmd 'stopinsert'
-		vim.api.nvim_win_close(top_left_win, true)
-		vim.api.nvim_win_close(top_right_win, true)
-		vim.api.nvim_win_close(prompt_win, true)
-		vim.api.nvim_win_close(insert_win, true)
-	end, {
-		buf = insert_buf,
-	})
-
-	-- Open.
-	setkey({'i', 'n'}, '<cr>', function()
-		vim.cmd 'stopinsert'
-
-		local pos = vim.api.nvim_win_get_cursor(top_left_win)
-		local line = vim.api.nvim_buf_get_lines(top_left_buf, pos[1] - 1, pos[1], false)
-
-		vim.api.nvim_win_close(top_left_win, true)
-		vim.api.nvim_win_close(top_right_win, true)
-		vim.api.nvim_win_close(prompt_win, true)
-		vim.api.nvim_win_close(insert_win, true)
-
-		if #line ~= 1 then return end
-
-		local filename = line[1]
-
-		-- Edit in current window.
-		-- TODO: Add key bindings to open in new tab or split.
-		vim.cmd('edit ' .. filename)
-	end, {
-		buf = insert_buf,
-	})
-
-	-----------------------
-	-----------------------
-	-- more key bindings --
-	-----------------------
-	-----------------------
-	-- Navigate files list.
-	local function prev()
-		local pos = vim.api.nvim_win_get_cursor(top_left_win)
-		if pos[1] > 1 then
-			pos[1] = pos[1] - 1
-		end
-		vim.api.nvim_win_set_cursor(top_left_win, pos)
-		preview.update_preview(top_left_buf, top_left_win, top_right_buf, top_right_win)
-	end
-
-	local function next()
-		local pos = vim.api.nvim_win_get_cursor(top_left_win)
-		local count = vim.api.nvim_buf_line_count(top_left_buf)
-		-- Account for the last '\n'.
-		if pos[1] < count - 1 then
-			pos[1] = pos[1] + 1
-		end
-		vim.api.nvim_win_set_cursor(top_left_win, pos)
-		preview.update_preview(top_left_buf, top_left_win, top_right_buf, top_right_win)
-	end
-
-	local list_bindings = {
-		{
-			action = next,
-			keys = { '<Tab>', '<C-n>' },
-		},
-		{
-			action = prev,
-			keys = { '<S-Tab>', '<C-p>' },
-		},
-	}
-
-	for _, binding in pairs(list_bindings) do
-		for _, key in pairs(binding.keys) do
-			setkey({'i', 'n'}, key, binding.action, { buf = insert_buf })
-		end
-	end
-
-	vim.api.nvim_create_autocmd('CursorMovedI', {
-		buf = insert_buf,
-		callback = function()
-			-- Get prompt, if any.
-			local text = vim.api.nvim_buf_get_lines(insert_buf, 0, -1, false)
-			-- Get the list of files, filtering by "prompt".
-			text = file_utils.process(text)
-			-- Put the resulting list on the top left pane.
-			vim.api.nvim_buf_set_lines(top_left_buf, 0, -1, false, text)
-			-- Move the cursor back to the first line/item.
-			vim.api.nvim_win_set_cursor(top_left_win, {1, 1})
-			-- Update the preview window.
-			preview.update_preview(top_left_buf, top_left_win, top_right_buf, top_right_win)
-		end,
-	})
 end
 
 -- TODO: Change key binding when it's working properly.
