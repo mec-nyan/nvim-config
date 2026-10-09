@@ -17,16 +17,27 @@ local M = {
 }
 
 function M.open(self, geometry)
-	self.top_left_buf, self.top_left_win = panes.top_left_pane(geometry)
-	self.top_right_buf, self.top_right_win = panes.top_right_pane(geometry)
-	self.prompt_buf, self.prompt_win = panes.prompt_pane(geometry)
-	self.insert_buf, self.insert_win = panes.insert_pane(geometry, self.prompt_win)
+	self:make_panes(geometry)
 
 	-- TODO: Can we better indicate to 'startinsert' in a particular buffer/window?
 	vim.cmd 'startinsert'
 
+	self:set_keybindings()
+
+	self:set_autocommnads()
+end
+
+function M.make_panes(self, geometry)
+	self.top_left_buf, self.top_left_win = panes.top_left_pane(geometry)
+	self.top_right_buf, self.top_right_win = panes.top_right_pane(geometry)
+	self.prompt_buf, self.prompt_win = panes.prompt_pane(geometry)
+	self.insert_buf, self.insert_win = panes.insert_pane(geometry, self.prompt_win)
+end
+
+function M.set_keybindings(self)
 	-- TODO: These shouldn't be here...
 	local setkey = vim.keymap.set
+
 	-- Quit.
 	setkey({'i', 'n'}, '<esc>', function()
 		vim.cmd 'stopinsert'
@@ -58,11 +69,6 @@ function M.open(self, geometry)
 		buf = self.insert_buf,
 	})
 
-	-----------------------
-	-----------------------
-	-- more key bindings --
-	-----------------------
-	-----------------------
 	-- Navigate files list.
 	local function prev()
 		local pos = vim.api.nvim_win_get_cursor(self.top_left_win)
@@ -100,7 +106,9 @@ function M.open(self, geometry)
 			setkey({'i', 'n'}, key, binding.action, { buf = self.insert_buf })
 		end
 	end
+end
 
+function M.set_autocommnads(self)
 	vim.api.nvim_create_autocmd('CursorMovedI', {
 		buf = self.insert_buf,
 		callback = function()
