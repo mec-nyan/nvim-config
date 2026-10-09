@@ -1,4 +1,5 @@
 local file_utils = require 'files.utils'
+local file_type = require 'files.filetypes'
 
 local M = {}
 
@@ -27,17 +28,14 @@ function M.update_preview(top_left_buf, top_left_win, top_right_buf, top_right_w
 	
 	vim.api.nvim_buf_set_lines(top_right_buf, 0, -1, false, out)
 
-	-- Syntax highlighting for the preview.
-	-- TODO: Set special cases where filetype cannot be deduced from file extension
-	-- (i.e. "Makefile", etc).
-	local extension = filename:match('%.(.*)') or 'text'
+	local ft = file_type.get_filetype(filename)
 
 	vim.api.nvim_win_call(top_right_win, function()
-		vim.cmd('set filetype=' .. extension)
+		vim.cmd('set filetype=' .. ft)
 	end)
 
 	vim.api.nvim_win_set_config(top_right_win, {
-		footer = ' ' .. extension .. ' ',
+		footer = ' ' .. ft .. ' ',
 		footer_pos = 'right',
 	})
 end
