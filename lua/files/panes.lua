@@ -1,18 +1,15 @@
 
-local dimensions = require 'files.dimensions'
-local dims = dimensions.get_dimensions()
-
 local M = {}
 
 
-function M.top_left_pane()
+function M.top_left_pane(geometry)
 	local top_left_buf = vim.api.nvim_create_buf(false, true)
 	local top_left_win = vim.api.nvim_open_win(top_left_buf, false, {
 		relative = 'editor',
-		row = dims.top,
-		col = dims.left,
-		width = dims.top_pane_left_width,
-		height = dims.top_pane_height,
+		row = geometry.top,
+		col = geometry.left,
+		width = geometry.top_pane_left_width,
+		height = geometry.top_pane_height,
 		style = 'minimal',
 		title = ' Files ',
 		title_pos = 'center',
@@ -31,14 +28,14 @@ function M.top_left_pane()
 	return top_left_buf, top_left_win
 end
 
-function M.top_right_pane()
+function M.top_right_pane(geometry)
 	local top_right_buf = vim.api.nvim_create_buf(false, true)
 	local top_right_win = vim.api.nvim_open_win(top_right_buf, false, {
 		relative = 'editor',
-		row = dims.top,
-		col = dims.left + dims.top_pane_left_width + 2,
-		width = dims.top_pane_right_width,
-		height = dims.top_pane_height,
+		row = geometry.top,
+		col = geometry.left + geometry.top_pane_left_width + 2,
+		width = geometry.top_pane_right_width,
+		height = geometry.top_pane_height,
 		style = 'minimal',
 		title = ' Preview ',
 		title_pos = 'center',
@@ -62,8 +59,8 @@ function M.top_right_pane()
 	return top_right_buf, top_right_win
 end
 
-function M.prompt_pane()
-	dims.top = dims.top + dims.top_pane_height + 2
+function M.prompt_pane(geometry)
+	geometry.top = geometry.top + geometry.top_pane_height + 2
 
 	local prompt_buf = vim.api.nvim_create_buf(false, true)
 	local prompt = ' 🔎 '
@@ -71,9 +68,9 @@ function M.prompt_pane()
 
 	local prompt_win = vim.api.nvim_open_win(prompt_buf, false, {
 		relative = 'editor',
-		row = dims.top,
-		col = dims.left,
-		width = dims.prompt_width - 2,
+		row = geometry.top,
+		col = geometry.left,
+		width = geometry.prompt_width - 2,
 		height = 1,
 		style = 'minimal',
 		focusable = false,
@@ -83,14 +80,18 @@ function M.prompt_pane()
 		scope = 'local', win = prompt_win,
 	})
 
+	return prompt_buf, prompt_win
+end
+
+function M.insert_pane(geometry, parent)
 	local insert_buf = vim.api.nvim_create_buf(false, true)
 
 	local insert_win = vim.api.nvim_open_win(insert_buf, true, {
 		relative = 'win',
-		win = prompt_win,
+		win = parent,
 		row = 0,
 		col = 5,
-		width = dims.prompt_width - 7,
+		width = geometry.prompt_width - 7,
 		height = 1,
 		style = 'minimal',
 		border = 'none',
@@ -105,7 +106,7 @@ function M.prompt_pane()
 		scope = 'local', buf = insert_buf,
 	})
 
-	return prompt_buf, prompt_win, insert_buf, insert_win
+	return insert_buf, insert_win
 end
 
 return M
