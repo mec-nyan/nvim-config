@@ -6,10 +6,16 @@
 
 -- Some helpers.
 
-local function tohex(s)
-	return string.format("#%x", s)
+--- Convert from decimal to hexadecimal.
+--- @param n The number.
+--- @return string Hexadecimal six digit number with prefix '#'.
+local function tohex(n)
+	return string.format("#%x", n)
 end
 
+--- Get highlight group by name.
+--- @param name string The name of the highlight group.
+--- @return {fg?: number, bg?: number} Map with the highlight definition.
 local function get_hl(name)
 	return vim.api.nvim_get_hl(0, { name = name })
 end
