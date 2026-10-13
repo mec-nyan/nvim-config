@@ -7,6 +7,10 @@
 --]]
 
 
+--- Get the comment "style" for the current language.
+--- @param ft The "filetype" (vim's).
+--- @return string Whatever signals a (line) comment has started (i.e. "//" in C++).
+--- @return string Regex that matches a (line) comment.
 local function get_comment_style(ft)
 	local comment_marker
 	local comment_match
@@ -30,6 +34,8 @@ local function get_comment_style(ft)
 end
 
 
+--- Draw a decoration "box" around the comment, using the style of the language.
+--- @param ft The "filetype" (vim's).
 local function decorate(ft)
 
 	local line = vim.api.nvim_get_current_line()
