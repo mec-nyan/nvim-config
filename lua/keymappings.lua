@@ -23,6 +23,12 @@ setkey({'n', 'v'}, 'ge', 'G', { desc = '[move] end of file' })
 -- Search
 setkey('n', '<leader>l', '<cmd>nohlsearch<cr>', { desc = '[n] clear searh highlight' })
 
+-- Source current (vim/lua) file.
+setkey('n', '<leader>s', function()
+	vim.cmd 'source %'
+	print(string.format('File "%s" reloaded ✨', vim.fn.expand('%:t')))
+end, { desc = '[TEST] Source current file.'})
+
 -- Close help/quickfix/explorer window with 'q'
 vim.api.nvim_create_autocmd('FileType', {
 	pattern = { 'help', 'qf', 'netrw' },
