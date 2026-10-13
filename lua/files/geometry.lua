@@ -1,13 +1,23 @@
------------------------------
--- Get and set dimensions. --
------------------------------
+------------------------------------------------
+-- Layout of the panes for the file explorer. --
+------------------------------------------------
+
 
 local M = {}
 
---- Set the size and position of the panes.  Since the UI can change later on,
---- consider this provisional.
---- @return table containing the panes' dimensions and position (top-left corner).
-function M.get_dimensions()
+
+--- @class Geometry
+--- @field top number The Y coordinate of the main rectangle.
+--- @field left number The X coordinate of the main rectangle.
+--- @field top_pane_height number The height of the top (main) pane.
+--- @field top_pane_left_width number The width of the top left window.
+--- @field top_pane_right_width number The width of the top right window.
+--- @field prompt_width number The width of the prompt pane.
+
+
+--- Calculate the dimensions and position of the panes according to the size of the editor.
+--- @return Geometry
+function M.get_geometry()
 	local available_width = vim.o.columns
 	local available_height = vim.o.lines
 
