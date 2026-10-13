@@ -53,7 +53,12 @@ end
 -- Fuzzy file picker --
 -----------------------
 
--- Helper function: map
+-- Helpers.
+
+--- Apply a function to each element of a table and return a new table.
+--- @param tbl table The table to "map" (YKWIM).
+--- @param fun function The function to apply.
+--- @return table Resulting table.
 local function map(tbl, fun)
 	if tbl == nil or #tbl == 0 then return end
 
@@ -66,7 +71,10 @@ local function map(tbl, fun)
 	return new_tbl
 end
 
--- Helper function: filter
+--- Filter "tbl" according with "fun" criteria.
+--- @param tbl table The table to filter (i.e. {1, 2, 3, 4}).
+--- @param fun function The filter criteria/predicate (i.e. "f(a) -> a % 2 == 0").
+--- @return table With the filtered elements (i.e. {2, 4}).
 local function filter(tbl, fun)
 	if tbl == nil or #tbl == 0 then return end
 
@@ -130,8 +138,6 @@ end
 -- Live grep --
 ---------------
 
---[[ WIP ]]--
-
 -- We need a script/module level variable.
 local M = {}
 M.selected = ""
@@ -179,7 +185,9 @@ local function set_up_live_grep()
 					end
 
 					-- Populate the qflist:
-					vim.fn.setqflist({}, 'r', { title = "[" .. live_grep_command .. "]", lines = info.matches })
+					vim.fn.setqflist({}, 'r',
+						{ title = "[" .. live_grep_command .. "]", lines = info.matches })
+
 					-- TODO: When/where should we clear the qflist?
 				else
 					-- No matches.
