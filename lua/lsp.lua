@@ -4,9 +4,6 @@
 --
 --]]
 
----------------------------------
--- Configure language servers. --
----------------------------------
 
 local function config_gopls()
 	vim.lsp.config['gopls'] = {
@@ -18,6 +15,7 @@ local function config_gopls()
 
 	vim.lsp.enable 'gopls'
 end
+
 
 local function config_clangd()
 	vim.lsp.config['clangd'] = {
@@ -31,16 +29,19 @@ local function config_clangd()
 	vim.lsp.enable 'clangd'
 end
 
+
 local function config_pylsp()
 	vim.lsp.config['pylsp'] = {
 		cmd = { 'pylsp' },
 		filetypes = { 'python' },
-		root_markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt', 'Pipfile', '.git' },
+		root_markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt', 'Pipfile',
+			'.git' },
 		single_file_support = true,
 	}
 
 	vim.lsp.enable 'pylsp'
 end
+
 
 local function config_rust_analyzer()
 	vim.lsp.config['rust-analyzer'] = {
@@ -63,9 +64,6 @@ local function config_rust_analyzer()
 	vim.lsp.enable 'rust-analyzer'
 end
 
-------------------------------
--- Config lsp kind symbols. --
-------------------------------
 
 local function config_lspkind()
 	local my_kind = {
@@ -161,12 +159,14 @@ local function set_lsp_keymappings()
 	end
 end
 
+
 local function config_lang_servers()
 	config_rust_analyzer()
 	config_clangd()
 	config_gopls()
 	config_pylsp()
 end
+
 
 local function set_autocmds()
 	vim.api.nvim_create_autocmd('LspAttach', {
@@ -193,7 +193,6 @@ local function set_autocmds()
 		end,
 	})
 end
-
 
 
 return {

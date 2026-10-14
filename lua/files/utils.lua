@@ -23,9 +23,9 @@ local function is_git()
 end
 
 --- Check whether "filename" is an executable file.
---- @param filename (string) the name of the file.
---- @return true if the file is executable, false otherwise.
---- @return error message "command failed" or nil.
+--- @param filename string The name of the file.
+--- @return boolean True if the file is executable, false otherwise.
+--- @return string Error message "command failed" or nil.
 function M.is_executable(filename)
 	local out = vim.system(
 		{ 'file', filename },
@@ -46,8 +46,8 @@ function M.is_executable(filename)
 end
 
 --- Get a list of files.  Filter according to "prompt".
---- @param prompt (table) contents of the prompt buffer.
---- @return table with 0 or more file names to display.
+--- @param prompt string[] Contents of the prompt buffer.  Should contain only one line.
+--- @return string[] Zero or more file names to display.
 function M.process(prompt)
 	if #prompt ~= 1 then
 		return { '🤪 ...' }

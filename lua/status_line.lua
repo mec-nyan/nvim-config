@@ -6,14 +6,9 @@
 
 local M = {}
 
--------------------------------------
--- This is the default statusline. --
--------------------------------------
-
-local default_sl = "%<%f %h%w%m%r %{% v:lua.require('vim._core.util').term_exitcode() %}%=%{% luaeval('(package.loaded[''vim.ui''] and vim.api.nvim_get_current_win() == tonumber(vim.g.actual_curwin or -1) and vim.ui.progress_status()) or '''' ')%}%{% &showcmdloc == 'statusline' ? '%-10.S ' : '' %}%{% exists('b:keymap_name') ? '<'..b:keymap_name..'> ' : '' %}%{% &busy > 0 ? '◐ ' : '' %}%{% luaeval('(package.loaded[''vim.diagnostic''] and next(vim.diagnostic.count()) and vim.diagnostic.status() .. '' '') or '''' ') %}%{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %}"
-
 
 -- Let's try to build it in blocks.
+
 
 --------------------
 -- Mode indicator --
@@ -143,6 +138,7 @@ vim.api.nvim_create_autocmd({
 })
 
 local branch = "%{v:lua.require'status_line'.get_branch()}%*"
+
 ------------
 -- Buffer --
 ------------
@@ -219,23 +215,31 @@ vim.api.nvim_create_autocmd({'VimEnter', 'ColorScheme'}, {
 			-- TODO: Refactor using nvim_set_hl as the previous examples...
 
 			-- Others (used for `ft`).
-			vim.cmd { cmd = 'highlight', args = { 'User4', 'guibg=yellowgreen', 'guifg=black', 'gui=NONE' } }
-			vim.cmd { cmd = 'highlight', args = { 'User5', 'guibg=green', 'guifg=white', 'gui=NONE' } }
-			vim.cmd { cmd = 'highlight', args = { 'User6', 'guibg=indianred', 'guifg=white', 'gui=NONE' } }
-			vim.cmd { cmd = 'highlight', args = { 'User7', 'guibg=NONE', 'guifg=darkorange', 'gui=NONE' } }
+			vim.cmd { cmd = 'highlight',
+					  args = { 'User4', 'guibg=yellowgreen', 'guifg=black', 'gui=NONE' } }
+			vim.cmd { cmd = 'highlight',
+					  args = { 'User5', 'guibg=green', 'guifg=white', 'gui=NONE' } }
+			vim.cmd { cmd = 'highlight',
+					  args = { 'User6', 'guibg=indianred', 'guifg=white', 'gui=NONE' } }
+			vim.cmd { cmd = 'highlight',
+					  args = { 'User7', 'guibg=NONE', 'guifg=darkorange', 'gui=NONE' } }
 
 			-- Cmdline workaround.
 			local type_hl = get_hl('Type')
 			fg = type_hl.fg and tohex(type_hl.fg) or 'yellow'
-			vim.cmd { cmd = 'highlight', args = { 'User8', 'guibg=' .. fg, 'guifg=black', 'gui=italic' } }
-			vim.cmd { cmd = 'highlight', args = { 'User9', 'guibg=NONE', 'guifg=' .. fg, 'gui=NONE' } }
+			vim.cmd { cmd = 'highlight',
+					  args = { 'User8', 'guibg=' .. fg, 'guifg=black', 'gui=italic' } }
+			vim.cmd { cmd = 'highlight',
+					  args = { 'User9', 'guibg=NONE', 'guifg=' .. fg, 'gui=NONE' } }
 		end)
 	end,
 })
 
 
 vim.api.nvim_create_autocmd({'ModeChanged'}, {
-	pattern = { '*:n*', '*:v*', '*:V*', '*:CTRL-V*', '*:s*', '*:S*', '*:i*', '*:R*', '*:r*', '*:t*' },
+	pattern = {
+		'*:n*', '*:v*', '*:V*', '*:CTRL-V*', '*:s*', '*:S*', '*:i*', '*:R*', '*:r*', '*:t*'
+	},
 	callback = function()
 		local mode = vim.fn.mode():lower():sub(1, 1)
 		set_mode_colour(mode)
