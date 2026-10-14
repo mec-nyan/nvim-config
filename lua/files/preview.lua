@@ -3,7 +3,11 @@ local file_type = require 'files.filetypes'
 
 local M = {}
 
--- Preview function.
+-- Show/update the content of the current (highlighted) file in the list.
+-- @param top_left_buf number The buffer ID of the files list.
+-- @param top_left_win number The window ID of the files list.
+-- @param top_right_buf number The buffer ID of the preview window.
+-- @param top_right_win number The window ID of the preview window.
 function M.update_preview(top_left_buf, top_left_win, top_right_buf, top_right_win)
 	local pos = vim.api.nvim_win_get_cursor(top_left_win)
 	local line = vim.api.nvim_buf_get_lines(top_left_buf, pos[1] - 1, pos[1], false)

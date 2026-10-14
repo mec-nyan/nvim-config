@@ -2,6 +2,18 @@ local panes = require 'files.panes'
 local preview = require 'files.preview'
 local file_utils = require 'files.utils'
 
+
+--- @class Panes
+--- @field top_left_buf number The files list buffer ID.
+--- @field top_left_win number The files list window ID.
+--- @field top_right_buf number The preview buffer ID.
+--- @field top_right_win number The preview window ID.
+--- @field prompt_buf number The prompt (border + prompt) buffer ID.
+--- @field prompt_win number The prompt (border + prompt) window ID.
+--- @field insert_buf number The insert buffer ID.
+--- @field insert_win number The insert window ID.
+
+
 local M = {
 	top_left_buf = nil,
 	top_left_buf = nil,
@@ -16,6 +28,10 @@ local M = {
 	insert_win = nil,
 }
 
+
+--- Layout and open the file picker.
+--- @param self Panes
+--- @param geometry Geometry
 function M.open(self, geometry)
 	self:make_panes(geometry)
 
@@ -27,6 +43,10 @@ function M.open(self, geometry)
 	self:set_autocommnads()
 end
 
+
+--- Arrange panes (buffers and windows) for the file picker.
+--- @param self Panes
+--- @param geometry Geometry
 function M.make_panes(self, geometry)
 	self.top_left_buf, self.top_left_win = panes.top_left_pane(geometry)
 	self.top_right_buf, self.top_right_win = panes.top_right_pane(geometry)
@@ -34,6 +54,9 @@ function M.make_panes(self, geometry)
 	self.insert_buf, self.insert_win = panes.insert_pane(geometry, self.prompt_win)
 end
 
+
+--- Set the key bindings attached to the panes.
+--- @param self Panes
 function M.set_keybindings(self)
 	-- TODO: These shouldn't be here...
 	local setkey = vim.keymap.set
@@ -76,7 +99,8 @@ function M.set_keybindings(self)
 			pos[1] = pos[1] - 1
 		end
 		vim.api.nvim_win_set_cursor(self.top_left_win, pos)
-		preview.update_preview(self.top_left_buf, self.top_left_win, self.top_right_buf, self.top_right_win)
+		preview.update_preview(self.top_left_buf, self.top_left_win, self.top_right_buf,
+			self.top_right_win)
 	end
 
 	local function next()
@@ -87,7 +111,8 @@ function M.set_keybindings(self)
 			pos[1] = pos[1] + 1
 		end
 		vim.api.nvim_win_set_cursor(self.top_left_win, pos)
-		preview.update_preview(self.top_left_buf, self.top_left_win, self.top_right_buf, self.top_right_win)
+		preview.update_preview(self.top_left_buf, self.top_left_win, self.top_right_buf,
+			self.top_right_win)
 	end
 
 	local list_bindings = {
@@ -108,6 +133,9 @@ function M.set_keybindings(self)
 	end
 end
 
+
+--- Create the necessary autocommands and attach them to the corresponding buffer(s).
+--- @params self Panes
 function M.set_autocommnads(self)
 	vim.api.nvim_create_autocmd('CursorMovedI', {
 		buf = self.insert_buf,
@@ -121,11 +149,15 @@ function M.set_autocommnads(self)
 			-- Move the cursor back to the first line/item.
 			vim.api.nvim_win_set_cursor(self.top_left_win, {1, 1})
 			-- Update the preview window.
-			preview.update_preview(self.top_left_buf, self.top_left_win, self.top_right_buf, self.top_right_win)
+			preview.update_preview(self.top_left_buf, self.top_left_win, self.top_right_buf,
+				self.top_right_win)
 		end,
 	})
 end
 
+
+--- Close the file picker (windows).
+--- @param self Panes
 function M.close(self)
 	vim.api.nvim_win_close(self.insert_win, true)
 	vim.api.nvim_win_close(self.prompt_win, true)
