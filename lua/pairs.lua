@@ -103,3 +103,11 @@ vim.api.nvim_create_user_command('PairsReset', function()
 	vim.g.pairs_stack = stack
 end, { desc = 'Clear pairs\' stack'}
 )
+
+-- Clear the stack when we leave insert mode.
+vim.api.nvim_create_autocmd('InsertLeave', {
+	callback = function()
+		stack = {}
+		vim.g.pairs_stack = stack
+	end
+})

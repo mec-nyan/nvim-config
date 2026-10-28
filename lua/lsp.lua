@@ -171,9 +171,7 @@ end
 local function set_autocmds()
 	vim.api.nvim_create_autocmd('LspAttach', {
 		callback = function(ev)
-			local bufnr = vim.api.nvim_get_current_buf()
-
-			vim.lsp.completion.enable(true, ev.data.client_id, bufnr, {
+			vim.lsp.completion.enable(true, ev.data.client_id, ev.buf, {
 				autotrigger = true,
 				convert = function(item)
 					return { abbr = item.label:gsub('%b()', '') }
@@ -181,6 +179,7 @@ local function set_autocmds()
 			})
 
 			vim.api.nvim_create_autocmd('BufWritePre', {
+				buf = ev.buf,
 				callback = function()
 					vim.lsp.buf.format()
 				end
