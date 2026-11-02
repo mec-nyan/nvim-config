@@ -22,7 +22,7 @@ vim.o.shortmess = vim.o.shortmess .. 'I'
 
 
 
-local function show()
+local function show(win, buf)
 	local intro_message = {
 		"                    N e o v i m                ",
 		"______________________________________________ ",
@@ -33,15 +33,6 @@ local function show()
 		"For help, type              :help<Enter>       ",
 		"                                               ",
 	}
-
-	local win = vim.api.nvim_get_current_win()
-	local buf = vim.api.nvim_get_current_buf()
-
-	-- TODO; Improve this guard:
-	if vim.fn.argc() > 0 or vim.api.nvim_buf_get_name(buf) ~= '' then
-		vim.notify("greetings: skipped.", vim.log.levels.INFO, {})
-		return
-	end
 
 	local height = vim.api.nvim_win_get_height(win)
 	local width = vim.api.nvim_win_get_width(win)
@@ -146,12 +137,21 @@ local id = vim.api.nvim_create_augroup('greetings', {})
 
 vim.api.nvim_create_autocmd('VimEnter', {
 	callback = function()
-		show()
+		local win = vim.api.nvim_get_current_win()
+		local buf = vim.api.nvim_get_current_buf()
+
+		-- TODO; Improve this guard:
+		if vim.fn.argc() > 0 or vim.api.nvim_buf_get_name(buf) ~= '' then
+			vim.notify("greetings: skipped.", vim.log.levels.INFO, {})
+			return
+		end
+
+		show(win, buf)
 
 		vim.api.nvim_create_autocmd('VimResized', {
-			buf = 0,
+			buf = buf,
 			callback = function()
-				show()
+				show(win, buf)
 			end,
 		})
 
