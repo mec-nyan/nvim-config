@@ -45,9 +45,7 @@ local function set_greetings_buffer_options()
 end
 
 
-local function show(win, buf)
-	set_greetings_buffer_options()
-
+local function make_banner(win, buf)
 	local intro_message = {
 		"╭───────────────────────────────────────────────────╮",
 		"│                     N e o v i m                   │",
@@ -83,8 +81,11 @@ local function show(win, buf)
 		table.insert(intro_message, 1, blank)
 	end
 
-	vim.api.nvim_buf_set_lines(buf, 0, -1, false, intro_message)
+	return intro_message, top, left, banner
+end
 
+
+local function paint_banner(win, buf, top, left, banner, intro_message)
 	-- Colours
 	local ns = vim.api.nvim_create_namespace('greetings_hl')
 
@@ -99,7 +100,6 @@ local function show(win, buf)
 	vim.api.nvim_set_hl(ns, 'Cursive', { italic = true })
 
 	vim.api.nvim_win_set_hl_ns(win, ns)
-
 	-- NOTE: row and col are ZERO BASED.  Adjust accordingly ...
 	-- (That's why `top` and `left` give us the right row and col).
 	
@@ -143,11 +143,23 @@ local function show(win, buf)
 		set_extmark(buf, ns, row, col - 1,
 			{ end_row = row, end_col = end_col, hl_group = 'Neo' })
 	end
+end
+
+
+local function show(win, buf)
+	set_greetings_buffer_options()
+
+	local intro_message, top, left, banner = make_banner(win, buf)
+
+	vim.api.nvim_buf_set_lines(buf, 0, -1, false, intro_message)
+
+	paint_banner(win, buf, top, left, banner, intro_message)
 
 	vim.opt_local.readonly = true
 	vim.opt_local.modified = false
 	vim.opt_local.fillchars = 'eob: '
 end
+
 
 local id = vim.api.nvim_create_augroup('greetings', {})
 
