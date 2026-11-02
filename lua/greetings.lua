@@ -20,23 +20,7 @@
 -- First try. Just put a string (with highlighting/colours) there.
 vim.o.shortmess = vim.o.shortmess .. 'I'
 
-
-
-local function show(win, buf)
-	local intro_message = {
-		"                    N e o v i m                ",
-		"______________________________________________ ",
-		"                                               ",
-		"If you're new to Nvim, type :help nvim<Enter>  ",
-		"To optimise Nvim, type      :checkhealth<Enter>",
-		"To quit, type               :q<Enter>          ",
-		"For help, type              :help<Enter>       ",
-		"                                               ",
-	}
-
-	local height = vim.api.nvim_win_get_height(win)
-	local width = vim.api.nvim_win_get_width(win)
-
+local function set_greetings_buffer_options()
 	if vim.opt_local.filetype ~= 'greetings' then
 		-- Set buffer options.
 		-- TODO: Some user options will need to be restored!
@@ -58,6 +42,27 @@ local function show(win, buf)
 			vim.opt_local[opt] = val
 		end
 	end
+end
+
+
+local function show(win, buf)
+	set_greetings_buffer_options()
+
+	local intro_message = {
+		"                    N e o v i m                ",
+		"______________________________________________ ",
+		"                                               ",
+		"If you're new to Nvim, type :help nvim<Enter>  ",
+		"To optimise Nvim, type      :checkhealth<Enter>",
+		"To quit, type               :q<Enter>          ",
+		"For help, type              :help<Enter>       ",
+		"                                               ",
+	}
+
+	local height = vim.api.nvim_win_get_height(win)
+	local width = vim.api.nvim_win_get_width(win)
+
+
 
 	local banner = {
 		height = #intro_message,
