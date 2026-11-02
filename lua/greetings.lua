@@ -62,8 +62,6 @@ local function show(win, buf)
 	local height = vim.api.nvim_win_get_height(win)
 	local width = vim.api.nvim_win_get_width(win)
 
-
-
 	local banner = {
 		height = #intro_message,
 		width = #intro_message[1],
@@ -88,9 +86,15 @@ local function show(win, buf)
 	-- Colours
 	local ns = vim.api.nvim_create_namespace('greetings_hl')
 
-	vim.api.nvim_set_hl(ns, 'Neo', { fg = 'dodgerblue', bold = true })
-	vim.api.nvim_set_hl(ns, 'Vim', { fg = 'limegreen', bold = true })
-	vim.api.nvim_set_hl(ns, 'Cyoa', { fg = 'grey50', italic = true })
+	-- Use theme colours.
+	local function_hl = vim.api.nvim_get_hl(0, { name = 'Function' })
+	local ok_hl = vim.api.nvim_get_hl(0, { name = 'OkMsg' })
+	local comment_hl = vim.api.nvim_get_hl(0, { name = 'Comment' })
+
+	vim.api.nvim_set_hl(ns, 'Neo', { fg = function_hl.fg })
+	vim.api.nvim_set_hl(ns, 'Vim', { fg = ok_hl.fg, bold })
+	vim.api.nvim_set_hl(ns, 'Cyoa', { fg = comment_hl.fg })
+	vim.api.nvim_set_hl(ns, 'Cursive', { italic = true })
 
 	vim.api.nvim_win_set_hl_ns(win, ns)
 
