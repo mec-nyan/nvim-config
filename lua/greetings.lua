@@ -183,11 +183,28 @@ vim.api.nvim_create_autocmd('VimEnter', {
 			end,
 		})
 
-		-- TODO: It's messing up completion...
-		-- vim.api.nvim_create_autocmd('WinLeave', {
-		-- 	buf = 0,
-		-- 	command = 'only',
-		-- })
+		-- Exit with "q" if we're in the start screen.
+		vim.keymap.set('n', 'q', '<cmd>quit<cr>', { buf = buf })
+
+		-- If we enter a new non-floating window (a split or tab) close the splash window.
+		vim.api.nvim_create_autocmd('WinEnter', {
+			buf = buf,
+			callback = function()
+				local wins = vim.api.nvim_list_wins()
+				-- Count non floating windows.
+				local count = 0
+				for _, w in pairs(wins) do
+					if vim.api.nvim_win_get_config(w).relative == "" then
+						count = count + 1
+					end
+				end
+
+				-- We can't close it if this is the only window.
+				if count > 1 then
+					vim.api.nvim_win_close(win, true)
+				end
+			end,
+		})
 	end,
 	group = id,
 	once = true,
