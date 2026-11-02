@@ -49,16 +49,16 @@ local function show(win, buf)
 	set_greetings_buffer_options()
 
 	local intro_message = {
-		"╭─────────────────────────────────────────────────╮",
-		"│                     N e o v i m                 │",
-		"├─────────────────────────────────────────────────┤",
-		"│                                                 │",
-		"│ If you're new to Nvim, type :help nvim<Enter>   │",
-		"│ To optimise Nvim, type      :checkhealth<Enter> │",
-		"│ To quit, type               :q<Enter>           │",
-		"│ For help, type              :help<Enter>        │",
-		"│                                                 │",
-		"╰─────────────────────────────────────────────────╯",
+		"╭───────────────────────────────────────────────────╮",
+		"│                     N e o v i m                   │",
+		"├───────────────────────────────────────────────────┤",
+		"│                                                   │",
+		"│ If you're new to Nvim, type \":help nvim<Enter>\"   │",
+		"│ To optimise Nvim, type      \":checkhealth<Enter>\" │",
+		"│ To quit, type               \":q<Enter>\"           │",
+		"│ For help, type              \":help<Enter>\"        │",
+		"│                                                   │",
+		"╰───────────────────────────────────────────────────╯",
 	}
 
 	local height = vim.api.nvim_win_get_height(win)
@@ -104,41 +104,46 @@ local function show(win, buf)
 	-- (That's why `top` and `left` give us the right row and col).
 	
 	local set_extmark = vim.api.nvim_buf_set_extmark
+
+	local row = top
+	set_extmark(buf, ns, row, 0, {
+		end_row = row + banner.height, end_col = 0, hl_group = 'Cyoa',
+	})
 	
-	-- local row = top
-	-- local col, end_col = intro_message[top+1]:find('N e o')
-	--
-	-- set_extmark(buf, ns, row, col - 1,
-	-- 	{ end_row = row, end_col = end_col, hl_group = 'Neo' })
-	--
-	-- col, end_col = intro_message[top+1]:find('v i m')
-	--
-	-- set_extmark(buf, ns, row, col - 1,
-	-- 	{ end_row = row, end_col = end_col, hl_group = 'Vim' })
-	--
+	row = row + 1
+	local col, end_col = intro_message[top+2]:find('N e o')
+
+	set_extmark(buf, ns, row, col - 1,
+		{ end_row = row, end_col = end_col, hl_group = 'Neo' })
+
+	col, end_col = intro_message[top+2]:find('v i m')
+
+	set_extmark(buf, ns, row, col - 1,
+		{ end_row = row, end_col = end_col, hl_group = 'Vim' })
+
+	row = row + 2
+
+	set_extmark(buf, ns, row, left,
+		{ end_row = row + 5,  end_col = 0, hl_group = 'Cursive' })
+
 	-- row = row + 1
-	--
-	-- set_extmark(buf, ns, row, left,
-	-- 	{ end_row = row, end_col = #intro_message[row+1], hl_group = 'Cyoa' })
-	--
-	-- row = row + 1
-	--
-	-- for i = 1, 4 do
-	-- 	row = row + 1
-	-- 	set_extmark(buf, ns, row, left,
-	-- 		{ end_row = row, end_col = #intro_message[row+1], hl_group = 'Cyoa' })
-	--
-	-- 	col, end_col = intro_message[row+1]:find(':[%a%s]+')
-	--
-	-- 	set_extmark(buf, ns, row, col - 1,
-	-- 		{ end_row = row, end_col = end_col, hl_group = 'Vim' })
-	--
-	-- 	col, end_col = intro_message[row+1]:find('<%a+>')
-	--
-	-- 	set_extmark(buf, ns, row, col - 1,
-	-- 		{ end_row = row, end_col = end_col, hl_group = 'Neo' })
-	-- end
-	--
+
+	for i = 1, 4 do
+		row = row + 1
+		set_extmark(buf, ns, row, left,
+			{ end_row = row, end_col = #intro_message[row+1], hl_group = 'Cyoa' })
+
+		col, end_col = intro_message[row+1]:find(':[%a%s]+')
+
+		set_extmark(buf, ns, row, col - 1,
+			{ end_row = row, end_col = end_col, hl_group = 'Vim' })
+
+		col, end_col = intro_message[row+1]:find('<%a+>')
+
+		set_extmark(buf, ns, row, col - 1,
+			{ end_row = row, end_col = end_col, hl_group = 'Neo' })
+	end
+
 	vim.opt_local.readonly = true
 	vim.opt_local.modified = false
 	vim.opt_local.fillchars = 'eob: '
