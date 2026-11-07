@@ -44,6 +44,16 @@ function M.open(self, geometry)
 end
 
 
+--- Close the file picker (windows).
+--- @param self Panes
+function M.close(self)
+	vim.api.nvim_win_close(self.insert_win, true)
+	vim.api.nvim_win_close(self.prompt_win, true)
+	vim.api.nvim_win_close(self.top_right_win, true)
+	vim.api.nvim_win_close(self.top_left_win, true)
+end
+
+
 --- Arrange panes (buffers and windows) for the file picker.
 --- @param self Panes
 --- @param geometry Geometry
@@ -55,73 +65,81 @@ function M.make_panes(self, geometry)
 end
 
 
+--- Go to the previous element on the list.
+function M.prev(self)
+	local pos = vim.api.nvim_win_get_cursor(self.top_left_win)
+	if pos[1] > 1 then
+		pos[1] = pos[1] - 1
+	end
+	vim.api.nvim_win_set_cursor(self.top_left_win, pos)
+	preview.update_preview(self.top_left_buf, self.top_left_win, self.top_right_buf,
+		self.top_right_win)
+end
+
+
+--- Go to the next element on the list.
+function M.next(self)
+	local pos = vim.api.nvim_win_get_cursor(self.top_left_win)
+	local count = vim.api.nvim_buf_line_count(self.top_left_buf)
+	-- Account for the last '\n'.
+	if pos[1] < count - 1 then
+		pos[1] = pos[1] + 1
+	end
+	vim.api.nvim_win_set_cursor(self.top_left_win, pos)
+	preview.update_preview(self.top_left_buf, self.top_left_win, self.top_right_buf,
+		self.top_right_win)
+end
+
+
+--- Close the file picker.
+function M.quit(self)
+	vim.cmd 'stopinsert'
+	self:close()
+end
+
+
+--- Open selected file in current window (replace existing buffer).
+function M.edit_file(self)
+	vim.cmd 'stopinsert'
+
+	local pos = vim.api.nvim_win_get_cursor(self.top_left_win)
+	local line = vim.api.nvim_buf_get_lines(self.top_left_buf, pos[1] - 1, pos[1], false)
+
+	self:close()
+
+	if #line ~= 1 then return end
+
+	local filename = line[1]
+
+	-- Edit in current window.
+	-- TODO: Add key bindings to open in new tab or split.
+	vim.cmd('edit ' .. filename)
+end
+
+
 --- Set the key bindings attached to the panes.
 --- @param self Panes
 function M.set_keybindings(self)
-	-- TODO: These shouldn't be here...
-	local setkey = vim.keymap.set
-
-	-- Quit.
-	setkey({'i', 'n'}, '<esc>', function()
-		vim.cmd 'stopinsert'
-		self:close()
-	end, {
-		buf = self.insert_buf,
-	})
-
-	-- Open file.
-	setkey({'i', 'n'}, '<cr>', function()
-		vim.cmd 'stopinsert'
-
-		local pos = vim.api.nvim_win_get_cursor(self.top_left_win)
-		local line = vim.api.nvim_buf_get_lines(self.top_left_buf, pos[1] - 1, pos[1], false)
-
-		self:close()
-
-		if #line ~= 1 then return end
-
-		local filename = line[1]
-
-		-- Edit in current window.
-		-- TODO: Add key bindings to open in new tab or split.
-		vim.cmd('edit ' .. filename)
-	end, {
-		buf = self.insert_buf,
-	})
-
-	-- Navigate files list.
-	local function prev()
-		local pos = vim.api.nvim_win_get_cursor(self.top_left_win)
-		if pos[1] > 1 then
-			pos[1] = pos[1] - 1
-		end
-		vim.api.nvim_win_set_cursor(self.top_left_win, pos)
-		preview.update_preview(self.top_left_buf, self.top_left_win, self.top_right_buf,
-			self.top_right_win)
-	end
-
-	local function next()
-		local pos = vim.api.nvim_win_get_cursor(self.top_left_win)
-		local count = vim.api.nvim_buf_line_count(self.top_left_buf)
-		-- Account for the last '\n'.
-		if pos[1] < count - 1 then
-			pos[1] = pos[1] + 1
-		end
-		vim.api.nvim_win_set_cursor(self.top_left_win, pos)
-		preview.update_preview(self.top_left_buf, self.top_left_win, self.top_right_buf,
-			self.top_right_win)
-	end
-
 	local list_bindings = {
 		{
-			action = next,
+			action = function() self:next() end,
 			keys = { '<Tab>', '<C-n>' },
 		},
 		{
-			action = prev,
+			action = function() self:prev() end,
 			keys = { '<S-Tab>', '<C-p>' },
 		},
+		{
+			action = function() self:quit() end,
+			keys = { '<Esc>' },
+		},
+		{
+			action = function() self:edit_file() end,
+			keys = { '<CR>' },
+		},
 	}
+
+	local setkey = vim.keymap.set
 
 	for _, binding in pairs(list_bindings) do
 		for _, key in pairs(binding.keys) do
@@ -150,16 +168,6 @@ function M.set_autocommnads(self)
 				self.top_right_win)
 		end,
 	})
-end
-
-
---- Close the file picker (windows).
---- @param self Panes
-function M.close(self)
-	vim.api.nvim_win_close(self.insert_win, true)
-	vim.api.nvim_win_close(self.prompt_win, true)
-	vim.api.nvim_win_close(self.top_right_win, true)
-	vim.api.nvim_win_close(self.top_left_win, true)
 end
 
 
