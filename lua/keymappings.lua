@@ -14,6 +14,10 @@ setkey('i', '<M-w>', '<esc><cmd>write<cr>', { desc = '[i] write' })
 setkey('n', '<M-q>', '<cmd>quit<cr>', { desc = '[n] quit' })
 setkey('i', '<M-q>', '<esc><cmd>quit<cr>', { desc = '[i] quit' })
 
+-- Quit all
+setkey('n', '<M-a>', '<cmd>quitall<cr>', { desc = '[n] quit all' })
+setkey('i', '<M-a>', '<esc><cmd>quitall<cr>', { desc = '[i] quit all' })
+
 -- Windows, tabs
 setkey('n', '<M-o>', '<cmd>only<cr>', { desc = '[n] only' })
 

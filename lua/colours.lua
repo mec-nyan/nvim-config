@@ -102,8 +102,18 @@ vim.api.nvim_create_autocmd('WinEnter', {
 -- Both loclist and qflist have the same filetype `qf`.
 vim.api.nvim_create_autocmd('FileType', {
 	pattern = { 'qf', 'help' },
-	callback = function()
+	callback = function(ev)
+		local colorcolumn = vim.o.colorcolumn
 		vim.wo.colorcolumn = ''
 		vim.wo.winhighlight = 'Normal:_alt_normal'
+
+		-- Restore background/etc on exit.
+		vim.api.nvim_create_autocmd({'BufLeave', 'BufWinLeave'}, {
+			callback = function()
+				vim.wo.colorcolumn = colorcolumn
+				vim.wo.winhighlight = 'Normal:Normal'
+			end,
+			buf = ev.buf,
+		})
 	end
 })
