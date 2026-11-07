@@ -76,10 +76,7 @@ function M.set_keybindings(self)
 		local pos = vim.api.nvim_win_get_cursor(self.top_left_win)
 		local line = vim.api.nvim_buf_get_lines(self.top_left_buf, pos[1] - 1, pos[1], false)
 
-		vim.api.nvim_win_close(self.top_left_win, true)
-		vim.api.nvim_win_close(self.top_right_win, true)
-		vim.api.nvim_win_close(self.prompt_win, true)
-		vim.api.nvim_win_close(self.insert_win, true)
+		self:close()
 
 		if #line ~= 1 then return end
 
