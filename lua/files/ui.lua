@@ -98,22 +98,47 @@ function M.quit(self)
 end
 
 
---- Open selected file in current window (replace existing buffer).
-function M.edit_file(self)
-	vim.cmd 'stopinsert'
-
+--- Get the name of the selected file.
+--- @return string | nil The name of the file or nothing.
+function M.get_file_name(self)
 	local pos = vim.api.nvim_win_get_cursor(self.top_left_win)
 	local line = vim.api.nvim_buf_get_lines(self.top_left_buf, pos[1] - 1, pos[1], false)
 
-	self:close()
-
 	if #line ~= 1 then return end
 
-	local filename = line[1]
+	return line[1]
+end
 
-	-- Edit in current window.
-	-- TODO: Add key bindings to open in new tab or split.
-	vim.cmd('edit ' .. filename)
+--- Open selected file.
+--- @param self Panes
+--- @param where string | nil Where to open the file (left, right, top, bottom, tab, nil).
+---                           Use "left, right, top, bottom" to open a split.
+---                           Use "tab" to edit the file in a new tab.
+---                           Pass nothing (nil) to replace current buffer.
+function M.edit_file(self, where)
+	vim.cmd 'stopinsert'
+
+	local filename = self:get_file_name()
+
+	self:close()
+
+	if filename == nil then
+		return
+	end
+
+	if where == nil then
+		vim.cmd('edit ' .. filename)
+	elseif where == 'left' then
+		vim.cmd('leftabove vsplit ' .. filename)
+	elseif where == 'right' then
+		vim.cmd('rightbelow vsplit ' .. filename)
+	elseif where == 'top' then
+		vim.cmd('topleft split ' .. filename)
+	elseif where == 'bottom' then
+		vim.cmd('botright split ' .. filename)
+	elseif where == 'tab' then
+		vim.cmd('tabnew ' .. filename)
+	end
 end
 
 
@@ -136,6 +161,26 @@ function M.set_keybindings(self)
 		{
 			action = function() self:edit_file() end,
 			keys = { '<CR>' },
+		},
+		{
+			action = function() self:edit_file('tab') end,
+			keys = { '<C-t>' },
+		},
+		{
+			action = function() self:edit_file('left') end,
+			keys = { '<C-h>' },
+		},
+		{
+			action = function() self:edit_file('right') end,
+			keys = { '<C-l>' },
+		},
+		{
+			action = function() self:edit_file('top') end,
+			keys = { '<C-k>' },
+		},
+		{
+			action = function() self:edit_file('bottom') end,
+			keys = { '<C-j>' },
 		},
 	}
 
