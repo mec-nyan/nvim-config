@@ -44,7 +44,7 @@ vim.o.shiftwidth = 4
 vim.o.foldmethod = 'syntax'
 vim.o.foldenable = true
 vim.o.foldlevel = 3
-vim.o.foldcolumn = '1'
+vim.o.foldcolumn = '0'
 -- TODO: Replace with Unicode symbols.
 vim.o.fillchars = 'fold: ,foldopen:+,foldclose:-,foldsep:▏'
 vim.o.laststatus = 3
