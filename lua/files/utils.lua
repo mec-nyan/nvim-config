@@ -84,7 +84,7 @@ function M.process(prompt)
 	-- - Show ignored files.
 	-- - Don't show hidden files.
 
-	local cmd = 'find'
+	local cmd
 	local ls_cmd
 
 	local is_git_repo, error = is_git()
@@ -97,8 +97,9 @@ function M.process(prompt)
 	if is_git_repo then
 		ls_cmd = 'git ls-files --cached --others --exclude-standard'
 	else
+		cmd = 'find'
 		if vim.fn.executable(cmd) ~= 1 then
-			return { '💩 ' .. cmd .. ' is not available' }
+			return { '💩 ' .. M.errors.find }
 		end
 		ls_cmd = cmd .. ' . -type f -printf "%P\n"'
 	end
@@ -106,7 +107,7 @@ function M.process(prompt)
 	-- Filter with fzf (fuzzy) if there's a prompt.
 	cmd = 'fzf'
 	if vim.fn.executable(cmd) ~= 1 then
-		return { '💩 ' .. cmd .. ' is not available' }
+		return { '💩 ' .. M.errors.fzf }
 	end
 
 	if prompt[1] ~= '' then
@@ -115,7 +116,7 @@ function M.process(prompt)
 	
 	cmd = 'bash'
 	if vim.fn.executable(cmd) ~= 1 then
-		return { '💩 ' .. cmd .. ' is not available' }
+		return { '💩 ' .. M.errors.bash }
 	end
 
 	local out = vim.system(
@@ -125,7 +126,7 @@ function M.process(prompt)
 
 	-- TODO: Error handling?
 	if out.stderr ~= '' then
-		return { '💩 ...' }
+		return { '💩 Unknown error: ' .. out.stderr }
 	end
 
 	return vim.split(out.stdout, '\n')
