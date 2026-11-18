@@ -6,12 +6,19 @@
 
 local M = {}
 
+
 --- Check if the current working directory is a git repository.
 --- @return true for git repositories, false otherwise.
 --- @return error "command failed" or nil.
 local function is_git()
+	local cmd = 'git'
+
+	if vim.fn.executable(cmd) ~= 1 then
+		return false, 'git command is not available.'
+	end
+
 	local out = vim.system(
-		{ 'git', 'rev-parse', '--is-inside-work-tree' },
+		{ cmd, 'rev-parse', '--is-inside-work-tree' },
 		{ text = true, cwd = vim.fn.getcwd(0, 0) }
 	):wait()
 
@@ -61,15 +68,38 @@ function M.process(prompt)
 	-- - Show ignored files.
 	-- - Don't show hidden files.
 
-	local ls_cmd = 'find . -type f -printf "%P\n"'
+	local cmd = 'find'
+	local ls_cmd
 
-	if is_git() then
+	local is_git_repo, error = is_git()
+
+	-- TODO: Better error messages (maybe switching on error types).
+	if error ~= nil then
+		return { '💩 ' .. error }
+	end
+
+	if is_git_repo then
 		ls_cmd = 'git ls-files --cached --others --exclude-standard'
+	else
+		if vim.fn.executable(cmd) ~= 1 then
+			return { '💩 ' .. cmd .. ' is not available' }
+		end
+		ls_cmd = cmd .. ' . -type f -printf "%P\n"'
 	end
 
 	-- Filter with fzf (fuzzy) if there's a prompt.
+	cmd = 'fzf'
+	if vim.fn.executable(cmd) ~= 1 then
+		return { '💩 ' .. cmd .. ' is not available' }
+	end
+
 	if prompt[1] ~= '' then
 		ls_cmd = ls_cmd .. ' | fzf --filter=' .. prompt[1]
+	end
+	
+	cmd = 'bash'
+	if vim.fn.executable(cmd) ~= 1 then
+		return { '💩 ' .. cmd .. ' is not available' }
 	end
 
 	local out = vim.system(
