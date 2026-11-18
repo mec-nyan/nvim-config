@@ -6,7 +6,7 @@
 
 local M = {}
 
-local errors = {
+M.errors = {
 	git = 'git is not available',
 	find = 'find is not available',
 	bash = 'bash is not available',
@@ -22,7 +22,7 @@ local function is_git()
 	local cmd = 'git'
 
 	if vim.fn.executable(cmd) ~= 1 then
-		return false, errors.git
+		return false, M.errors.git
 	end
 
 	local out = vim.system(
@@ -31,7 +31,7 @@ local function is_git()
 	):wait()
 
 	if out.stderr ~= '' then
-		return false, string.format('%s: %s', cmd, errors.failed)
+		return false, string.format('%s: %s', cmd, M.errors.failed)
 	end
 
 	return true, nil
@@ -42,13 +42,19 @@ end
 --- @return boolean True if the file is executable, false otherwise.
 --- @return string Error message "command failed" or nil.
 function M.is_executable(filename)
+	local cmd = 'file'
+
+	if vim.fn.executable(cmd) ~= 1 then
+		return false, M.errors.file
+	end
+
 	local out = vim.system(
-		{ 'file', filename },
+		{ cmd, filename },
 		{ text = true, cwd = vim.fn.getcwd(0, 0)}
 	):wait()
 
 	if out.stderr ~= '' then
-		return false, "command failed"
+		return false, string.format('%s: %s', cmd, M.errors.failed)
 	end
 
 	-- TODO: I'm matching based on the output of "file" containing the word
@@ -82,7 +88,7 @@ function M.process(prompt)
 	local is_git_repo, error = is_git()
 
 	-- TODO: Better error messages (maybe switching on error types).
-	if error ~= nil  and error == errors.git then
+	if error ~= nil  and error == M.errors.git then
 		return { '💩 ' .. error }
 	end
 

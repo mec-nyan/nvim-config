@@ -16,9 +16,17 @@ function M.update_preview(top_left_buf, top_left_win, top_right_buf, top_right_w
 	local filename = line[1]
 
 	local preview = nil
-	local out = { 'Oops!' }
+	local error_msg = nil
+	local out = {}
 
 	local is_exe, error = file_utils.is_executable(filename)
+	if error ~= nil then
+		error_msg = {
+			"!! Couldn't stat " .. filename .. ". (" .. error .. ")",
+			"!! (Possibly previewing an executable file)",
+			"..."
+		}
+	end
 
 	if not is_exe then
 		preview = vim.system({ 'cat', filename }, { text = true }):wait()
@@ -28,6 +36,11 @@ function M.update_preview(top_left_buf, top_left_win, top_right_buf, top_right_w
 
 	if preview ~= nil and preview.stderr == '' then
 		out = vim.split(preview.stdout, '\n')
+		if error_msg ~= nil then
+			for i, line in ipairs(error_msg) do
+				table.insert(out, i, line)
+			end
+		end
 	end
 	
 	vim.api.nvim_buf_set_lines(top_right_buf, 0, -1, false, out)
