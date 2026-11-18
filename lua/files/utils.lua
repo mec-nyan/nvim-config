@@ -6,6 +6,14 @@
 
 local M = {}
 
+local errors = {
+	git = 'git is not available',
+	find = 'find is not available',
+	bash = 'bash is not available',
+	file = 'file is not available',
+	fzf = 'fzf is not available',
+	failed = 'command failed',
+}
 
 --- Check if the current working directory is a git repository.
 --- @return true for git repositories, false otherwise.
@@ -14,7 +22,7 @@ local function is_git()
 	local cmd = 'git'
 
 	if vim.fn.executable(cmd) ~= 1 then
-		return false, 'git command is not available.'
+		return false, errors.git
 	end
 
 	local out = vim.system(
@@ -23,7 +31,7 @@ local function is_git()
 	):wait()
 
 	if out.stderr ~= '' then
-		return false, "command failed"
+		return false, string.format('%s: %s', cmd, errors.failed)
 	end
 
 	return true, nil
@@ -74,7 +82,7 @@ function M.process(prompt)
 	local is_git_repo, error = is_git()
 
 	-- TODO: Better error messages (maybe switching on error types).
-	if error ~= nil then
+	if error ~= nil  and error == errors.git then
 		return { '💩 ' .. error }
 	end
 
