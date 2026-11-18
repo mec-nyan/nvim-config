@@ -6,12 +6,14 @@
 
 local M = {}
 
+local error_template = 'Command `%s` is not available.  Is it installed?'
+
 M.errors = {
-	git = 'git is not available',
-	find = 'find is not available',
-	bash = 'bash is not available',
-	file = 'file is not available',
-	fzf = 'fzf is not available',
+	git = error_template:format('git'),
+	find = error_template:format('find'),
+	bash = error_template:format('bash'),
+	file = error_template:format('file'),
+	fzf = error_template:format('fzf'),
 	failed = 'command failed',
 }
 
